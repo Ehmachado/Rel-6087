@@ -882,7 +882,7 @@ function processData(agenciasText, carteirasText, redesText) {
       realizados30 = agenciaInfo.realizados30;
     }
 
-    const realizadoMes = realizado + realizados30;
+    const realizadoMes = realizados30; // Contatos mês NÃO soma contatos dia
     const falta = meta - realizadoMes;
     const pct = meta > 0 ? (realizadoMes / meta) * 100 : 0;
 
@@ -925,7 +925,7 @@ function renderBoards(porRede, todasLinhas) {
     return;
   }
 
-  const resumoHTML = '<div class="panel"><h2>📋 Resumo dos Painéis</h2><div class="board-list" id="board-list"></div></div></div>';
+  const resumoHTML = '<div class="panel"><h2>📋 Resumo dos Painéis</h2><div class="board-list" id="board-list"></div></div>';
   resultsArea.innerHTML = resumoHTML;
   const boardList = document.getElementById('board-list');
 
@@ -937,12 +937,13 @@ function renderBoards(porRede, todasLinhas) {
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
     const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
     const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
-    const badge = getBadgeClass(pctGeral);
 
     const card = document.createElement('div');
     card.className = 'board';
-    card.innerHTML = `
-      <div style="padding: 25px;">
+    
+    const cardContent = document.createElement('div');
+    cardContent.style.padding = '25px';
+    cardContent.innerHTML = `
         <h3 style="font-size: 22px; color: var(--bb-azul); margin-bottom: 15px;">${nomeRede}</h3>
         <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
           <div>
@@ -964,13 +965,32 @@ function renderBoards(porRede, todasLinhas) {
             <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalRealMes)}</div>
           </div>
         </div>
-      </div>
-      <div class="board-actions">
-        <button class="btn" onclick="previewBoard('${nomeRede}')">👁️ Preview</button>
-        <button class="btn" onclick="exportBoard('${nomeRede}')">💾 PNG</button>
-        <button class="btn btn-excel" onclick="exportNetworkToExcel('${nomeRede}')">📊 XLSX</button>
-      </div>
     `;
+    card.appendChild(cardContent);
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'board-actions';
+    
+    const btnPreview = document.createElement('button');
+    btnPreview.className = 'btn';
+    btnPreview.textContent = '👁️ Preview';
+    btnPreview.onclick = () => previewBoard(nomeRede);
+    
+    const btnPNG = document.createElement('button');
+    btnPNG.className = 'btn';
+    btnPNG.textContent = '💾 PNG';
+    btnPNG.onclick = () => exportBoard(nomeRede);
+    
+    const btnXLSX = document.createElement('button');
+    btnXLSX.className = 'btn btn-excel';
+    btnXLSX.textContent = '📊 XLSX';
+    btnXLSX.onclick = () => exportNetworkToExcel(nomeRede);
+    
+    actionsDiv.appendChild(btnPreview);
+    actionsDiv.appendChild(btnPNG);
+    actionsDiv.appendChild(btnXLSX);
+    card.appendChild(actionsDiv);
+    
     boardList.appendChild(card);
   });
 
@@ -983,8 +1003,10 @@ function renderBoards(porRede, todasLinhas) {
 
     const card = document.createElement('div');
     card.className = 'board';
-    card.innerHTML = `
-      <div style="padding: 25px;">
+    
+    const cardContent = document.createElement('div');
+    cardContent.style.padding = '25px';
+    cardContent.innerHTML = `
         <h3 style="font-size: 22px; color: #C62828; margin-bottom: 15px;">⚠️ Agências Abaixo de 100%</h3>
         <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
           <div>
@@ -1006,13 +1028,32 @@ function renderBoards(porRede, todasLinhas) {
             <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalRealMes)}</div>
           </div>
         </div>
-      </div>
-      <div class="board-actions">
-        <button class="btn" onclick="previewBoard('Abaixo_100')">👁️ Preview</button>
-        <button class="btn" onclick="exportBoard('Abaixo_100')">💾 PNG</button>
-        <button class="btn btn-excel" onclick="exportNetworkToExcel('Abaixo_100')">📊 XLSX</button>
-      </div>
     `;
+    card.appendChild(cardContent);
+    
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'board-actions';
+    
+    const btnPreview = document.createElement('button');
+    btnPreview.className = 'btn';
+    btnPreview.textContent = '👁️ Preview';
+    btnPreview.onclick = () => previewBoard('Abaixo_100');
+    
+    const btnPNG = document.createElement('button');
+    btnPNG.className = 'btn';
+    btnPNG.textContent = '💾 PNG';
+    btnPNG.onclick = () => exportBoard('Abaixo_100');
+    
+    const btnXLSX = document.createElement('button');
+    btnXLSX.className = 'btn btn-excel';
+    btnXLSX.textContent = '📊 XLSX';
+    btnXLSX.onclick = () => exportNetworkToExcel('Abaixo_100');
+    
+    actionsDiv.appendChild(btnPreview);
+    actionsDiv.appendChild(btnPNG);
+    actionsDiv.appendChild(btnXLSX);
+    card.appendChild(actionsDiv);
+    
     boardList.appendChild(card);
   }
 
@@ -1041,9 +1082,9 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
       <th style="width: 5%;">UF</th>
       ${hasRedeColumn ? '<th style="width: 15%;">Rede</th>' : ''}
       <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Meta</th>
-      <th class="text-right" style="width: ${hasRedeColumn ? '18%' : '20%';}">Real. (Dia)</th>
-      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%';};">30 dias</th>
-      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%';;">Falta</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '18%' : '20%'};">Real. (Dia)</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">30 dias</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Falta</th>
       <th class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">% Ating.</th>
     </tr>
   `;
@@ -1056,7 +1097,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
         <td style="width: 5%;">${item.uf}</td>
         ${hasRedeColumn ? `<td style="width: 15%;">${item.rede}</td>` : ''}
         <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.meta)}</td>
-        <td class="text-right cell-highlight" style="width: ${hasRedeColumn ? '18%' : '20%';}">${formatNumber(item.realizado)}</td>
+        <td class="text-right cell-highlight" style="width: ${hasRedeColumn ? '18%' : '20%'};">${formatNumber(item.realizado)}</td>
         <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizados30)}</td>
         <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'}; color: ${item.falta > 0 ? '#C62828' : '#2E7D32'};">${formatNumber(item.falta)}</td>
         <td class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">
@@ -1366,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = rows.map(row => row.slice(0, 6).join(';')).join('\n');
       document.getElementById('txt-agencias').value = text;
       if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, text); }
-      alert('✓� Agências carregadas com sucesso!');
+      alert('✓ Agências carregadas com sucesso!');
     } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
   });
 
@@ -1394,7 +1435,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Processar
   document.getElementById('btn-processar').addEventListener('click', () => {
-    console.log('Processando dados...');
     const agencias = document.getElementById('txt-agencias').value;
     const carteiras = document.getElementById('txt-carteiras').value;
     const redes = document.getElementById('txt-redes').value;
@@ -1409,8 +1449,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) { console.error('Erro ao processar:', error); alert('❌ Erro ao processar dados: ' + error.message); }
   });
 
-  // Exportar todos
+  // Exportar todos (PNG)
   document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
+  
+  // Exportar todos (Excel)
   document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToExcel);
 
   // Limpar
@@ -1434,14 +1476,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedRedes = localStorage.getItem(LS_KEYS.redes);
   if (savedRedes) { document.getElementById('txt-redes').value = savedRedes; document.getElementById('save-redes').checked = true; }
 });
-
-// Expor funções para uso global
-window.exportBoard = exportBoard;
-window.previewBoard = previewBoard;
-window.exportNetworkToExcel = exportNetworkToExcel;
-window.exportAllBoards = exportAllBoards;
-window.testExport = testExport;
-</script>
 </script>
 </body>
 </html>
