@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Super Barreiras — Painéis de Metas</title>
+<title>Contatos MP 1314, Rel 6087 — Painéis de Metas</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -166,6 +166,15 @@ textarea:focus {
   background: linear-gradient(135deg, #ffd700, var(--bb-amarelo));
 }
 
+.btn-excel {
+  background: linear-gradient(135deg, #217346, #1e7e34);
+  color: #fff;
+}
+
+.btn-excel:hover {
+  background: linear-gradient(135deg, #1e7e34, #217346);
+}
+
 .file-input {
   position: relative;
   display: inline-block;
@@ -218,7 +227,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
 }
 
-.theme-classic { background: linear-gradient(135deg, #0033A0, #0052cc); color: white; }
+.theme-classic { background: linear-gradient(135deg, var(--bb-azul), #0052cc); color: white; }
 .theme-dark { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
 .theme-ocean { background: linear-gradient(135deg, #0891b2, #06b6d4); color: white; }
 .theme-sunset { background: linear-gradient(135deg, #dc2626, #f97316); color: white; }
@@ -239,6 +248,12 @@ textarea:focus {
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.board:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
 .board-actions {
@@ -247,10 +262,12 @@ textarea:focus {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* Estilos para exportação */
-.export-container;
+.export-container {
+  position: fixed;
   left: -9999px;
   top: 0;
 }
@@ -283,7 +300,7 @@ textarea:focus {
 .preview-close {
   position: absolute;
   top: 10px;
-  right
+  right: 10px;
   background: #f44336;
   color: white;
   border: none;
@@ -307,12 +324,12 @@ textarea:focus {
 
 .board-content[data-theme="dark"] { background: #0f172a; }
 .board-content[data-theme="ocean"] { background: #ecfeff; }
-.board-content[data-theme background: #fff7ed; }
+.board-content[data-theme="sunset"] { background: #fff7ed; }
 .board-content[data-theme="forest"] { background: #f0fdf4; }
 
 .board-header {
   padding: 30px 25px;
-  background: linear-gradient(135deg, #0033A0 0%, #0052cc 100%);
+  background: linear-gradient(135deg, var(--bb-azul) 0%, #0052cc 100%);
 }
 
 .board-header[data-theme="dark"] {
@@ -324,7 +341,10 @@ textarea:focus {
 }
 
 .board-header[data-theme="sunset"] {
-  background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);="forest"] {
+  background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+}
+
+.board-header[data-theme="forest"] {
   background: linear-gradient(135deg, #047857 0%, #059669 100%);
 }
 
@@ -342,7 +362,7 @@ textarea:focus {
 .board-logo {
   width: 50px;
   height: 50px;
-  background: #FFCC00;
+  background: var(--bb-amarelo);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -513,7 +533,7 @@ textarea:focus {
 
 .cell-highlight {
   font-weight: 800;
-  color: #0033A0;
+  color: var(--bb-azul);
 }
 
 .cell-badge {
@@ -583,7 +603,7 @@ footer {
       <div class="header-content">
         <div class="logo">BB</div>
         <div>
-          <h1>Painéis por Rede — Metas de Contatos</h1>
+          <h1>Contatos MP 1314, Rel 6087</h1>
           <div class="subtitle">Sistema inteligente de visualização e exportação de dados</div>
         </div>
       </div>
@@ -613,8 +633,8 @@ footer {
         <hr />
 
         <div>
-          <h3 style="font-size: 16px; margin-bottom: 10px; color: white;">Planilha de Carteiras</h3>
-          <div class="hint">8 colunas: Prefixo | Dependência | UF | Carteira | Tipo | Total Clientes | Contatos Dia | Contatos 30 dias</div>
+          <h3 style="font-size: 16px; margin-bottom: 10px; color: white;">Planilha de Carteiras (Opcional)</h3>
+          <div class="hint">8 colunas: Prefixo | Dependência | UF | Carteira | Tipo | Total Clientes | Contatos Dia | Contatos 30 dias. Se vazia, usará dados da planilha de agências.</div>
           <textarea id="txt-carteiras" placeholder="10;Agência 1001;DF;Carteira A;Varejo;80;15;60&#10;10;Agência 1001;DF;Carteira B;Empresarial;70;10;20"></textarea>
           <div class="controls">
             <div class="file-input">
@@ -669,6 +689,7 @@ footer {
         
         <div class="controls">
           <button class="btn btn-primary" id="btn-export-all">💾 Exportar Todas as Redes (PNG)</button>
+          <button class="btn btn-excel" id="btn-export-all-excel">📊 Exportar Dados (XLSX)</button>
           <button class="btn" id="btn-clear">🗑️ Limpar Resultados</button>
         </div>
 
@@ -702,7 +723,7 @@ footer {
   </div>
 
   <footer>
-    Desenvolvido para Banco do Brasil • Aceita delimitadores: <strong>;</strong> <strong>,</strong> ou <strong>TAB</strong>
+    Desenvolvido para Contatos MP 1314, Rel 6087 • Aceita delimitadores: <strong>;</strong> <strong>,</strong> ou <strong>TAB</strong>
   </footer>
 
 <script>
@@ -788,7 +809,6 @@ function processData(agenciasText, carteirasText, redesText) {
   const carteiras = parseTable(carteirasText);
   const redes = parseTable(redesText);
 
-  // 1. Processar carteiras e agrupar por dependência
   const carteirasPorDep = {};
   carteiras.forEach(row => {
     if (row.length < 7) return;
@@ -800,18 +820,13 @@ function processData(agenciasText, carteirasText, redesText) {
     const contatos30 = toNumber(row[7]);
 
     if (!carteirasPorDep[dep]) {
-      carteirasPorDep[dep] = {
-        meta: 0,
-        realizado: 0,
-        realizados30: 0
-      };
+      carteirasPorDep[dep] = { meta: 0, realizado: 0, realizados30: 0 };
     }
     carteirasPorDep[dep].meta += totalClientes;
     carteirasPorDep[dep].realizado += contatosDia;
     carteirasPorDep[dep].realizados30 += contatos30;
   });
 
-  // 2. Processar agências (com soma automática para duplicatas)
   const agenciasMap = {};
   agencias.forEach(row => {
     if (row.length < 6) return;
@@ -825,23 +840,14 @@ function processData(agenciasText, carteirasText, redesText) {
     const realizados30 = toNumber(row[5]);
 
     if (agenciasMap[dep]) {
-      // Se a agência já existe, soma os valores
       agenciasMap[dep].totalClientes += totalClientes;
       agenciasMap[dep].realizado += realizado;
       agenciasMap[dep].realizados30 += realizados30;
     } else {
-      // Se é a primeira vez, cria a entrada
-      agenciasMap[dep] = {
-        prefixo,
-        uf,
-        totalClientes,
-        realizado,
-        realizados30
-      };
+      agenciasMap[dep] = { prefixo, uf, totalClientes, realizado, realizados30 };
     }
   });
 
-  // 3. Mapear redes
   const redePorDep = {};
   const redePorPrefixo = {};
   
@@ -855,28 +861,22 @@ function processData(agenciasText, carteirasText, redesText) {
     if (prefixo) redePorPrefixo[prefixo] = rede;
   });
 
-  // 4. Consolidar dados finais
-  const todasDeps = new Set([
-    ...Object.keys(agenciasMap),
-    ...Object.keys(carteirasPorDep)
-  ]);
+  const todasDeps = new Set([...Object.keys(agenciasMap), ...Object.keys(carteirasPorDep)]);
 
   const linhas = [];
   todasDeps.forEach(dep => {
     const agenciaInfo = agenciasMap[dep];
     const carteiraInfo = carteirasPorDep[dep];
 
-    if (!agenciaInfo) return; // Pular se não houver info da agência
+    if (!agenciaInfo) return;
 
     let meta, realizado, realizados30;
 
     if (carteiraInfo) {
-      // Tem carteiras: usa os dados consolidados delas
       meta = carteiraInfo.meta;
       realizado = carteiraInfo.realizado;
       realizados30 = carteiraInfo.realizados30;
     } else {
-      // Não tem carteiras: usa os dados da planilha de agências
       meta = agenciaInfo.totalClientes;
       realizado = agenciaInfo.realizado;
       realizados30 = agenciaInfo.realizados30;
@@ -885,7 +885,6 @@ function processData(agenciasText, carteirasText, redesText) {
     const falta = meta - realizado - realizados30;
     const pct = meta > 0 ? (realizado / meta) * 100 : 0;
 
-    // Determinar rede
     let rede = 'Sem Rede';
     if (redePorDep[dep]) {
       rede = redePorDep[dep];
@@ -899,23 +898,13 @@ function processData(agenciasText, carteirasText, redesText) {
     }
 
     linhas.push({
-      rede,
-      dependencia: dep,
-      uf: agenciaInfo.uf,
-      meta,
-      realizado,
-      realizados30,
-      falta,
-      percentual: pct
+      rede, dependencia: dep, uf: agenciaInfo.uf, meta, realizado, realizados30, falta, percentual: pct
     });
   });
 
-  // Agrupar por rede
   const porRede = {};
   linhas.forEach(linha => {
-    if (!porRede[linha.rede]) {
-      porRede[linha.rede] = [];
-    }
+    if (!porRede[linha.rede]) porRede[linha.rede] = [];
     porRede[linha.rede].push(linha);
   });
 
@@ -939,9 +928,7 @@ function renderBoards(porRede, todasLinhas) {
   resultsArea.innerHTML = resumoHTML;
   const boardList = document.getElementById('board-list');
 
-  const redesOrdenadas = Object.keys(porRede).sort((a, b) => 
-    a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })
-  );
+  const redesOrdenadas = Object.keys(porRede).sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
 
   redesOrdenadas.forEach(nomeRede => {
     const items = porRede[nomeRede].sort((a, b) => b.percentual - a.percentual);
@@ -979,7 +966,8 @@ function renderBoards(porRede, todasLinhas) {
       </div>
       <div class="board-actions">
         <button class="btn" onclick="previewBoard('${nomeRede}')">👁️ Preview</button>
-        <button class="btn" onclick="exportBoard('${nomeRede}')">💾 Exportar PNG</button>
+        <button class="btn" onclick="exportBoard('${nomeRede}')">💾 PNG</button>
+        <button class="btn btn-excel" onclick="exportNetworkToExcel('${nomeRede}')">📊 XLSX</button>
       </div>
     `;
     boardList.appendChild(card);
@@ -1010,7 +998,7 @@ function renderBoards(porRede, todasLinhas) {
           </div>
           <div>
             <div style="font-size: 13px; color: #64748b;">Meta Total</div>
-            <div style="px; font-weight: 800;">${formatNumber(totalMeta)}</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalMeta)}</div>
           </div>
           <div>
             <div style="font-size: 13px; color: #64748b;">Realizado Total</div>
@@ -1020,7 +1008,8 @@ function renderBoards(porRede, todasLinhas) {
       </div>
       <div class="board-actions">
         <button class="btn" onclick="previewBoard('Abaixo_100')">👁️ Preview</button>
-        <button class="btn" onclick="exportBoard('Abaixo_100')">💾 Exportar PNG</button>
+        <button class="btn" onclick="exportBoard('Abaixo_100')">💾 PNG</button>
+        <button class="btn btn-excel" onclick="exportNetworkToExcel('Abaixo_100')">📊 XLSX</button>
       </div>
     `;
     boardList.appendChild(card);
@@ -1029,7 +1018,7 @@ function renderBoards(porRede, todasLinhas) {
   window.boardData = { porRede, abaixoDe100 };
 }
 
-// ===== EXPORTAÇÃO DE PAINÉIS =====
+// ===== EXPORTAÇÃO DE PAINÉIS (PNG) =====
 function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
   const badge = getBadgeClass(stats.percentual);
   
@@ -1042,14 +1031,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
   const tableHeight = TABLE_HEADER_HEIGHT + (items.length * ROW_HEIGHT);
   const height = Math.max(900, HEADER_HEIGHT + tableHeight + PADDING + FOOTER_HEIGHT);
 
-  const themeMap = {
-    'classic': '',
-    'dark': 'dark',
-    'ocean': 'ocean',
-    'sunset': 'sunset',
-    'forest': 'forest'
-  };
-
+  const themeMap = { 'classic': '', 'dark': 'dark', 'ocean': 'ocean', 'sunset': 'sunset', 'forest': 'forest' };
   const themeAttr = themeMap[theme] || '';
 
   let tableHeaders = `
@@ -1089,7 +1071,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
         <div class="board-title-wrap">
           <div class="board-logo">BB</div>
           <div class="board-title-text">
-            <div class="board-super">Super Barreiras</div>
+            <div class="board-super">Contatos MP 1314, Rel 6087</div>
             <div class="board-name">${nomeRede}</div>
           </div>
         </div>
@@ -1111,18 +1093,12 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
 }
 
 function previewBoard(nomeRede) {
-  if (!window.boardData) {
-    alert('❌ Nenhum dado disponível para visualizar');
-    return;
-  }
-
+  if (!window.boardData) { alert('❌ Nenhum dado disponível para visualizar'); return; }
   const { porRede, abaixoDe100 } = window.boardData;
-  
   let items, stats, hasRedeColumn = false;
   
   if (nomeRede === 'Abaixo_100') {
-    items = abaixoDe100;
-    hasRedeColumn = true;
+    items = abaixoDe100; hasRedeColumn = true;
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
     const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
     const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
@@ -1138,36 +1114,21 @@ function previewBoard(nomeRede) {
 
   const previewContainer = document.getElementById('preview-container');
   const previewBoard = document.getElementById('preview-board');
-  
   const html = createBoardHTML(nomeRede, items, stats, currentTheme, hasRedeColumn);
   previewBoard.innerHTML = html;
-  
   previewContainer.style.display = 'flex';
   
-  document.getElementById('preview-close').onclick = () => {
-    previewContainer.style.display = 'none';
-  };
-  
-  previewContainer.onclick = (e) => {
-    if (e.target === previewContainer) {
-      previewContainer.style.display = 'none';
-    }
-  };
+  document.getElementById('preview-close').onclick = () => { previewContainer.style.display = 'none'; };
+  previewContainer.onclick = (e) => { if (e.target === previewContainer) { previewContainer.style.display = 'none'; } };
 }
 
 async function exportBoard(nomeRede) {
-  if (!window.boardData) {
-    alert('❌ Nenhum dado disponível para exportar');
-    return;
-  }
-
+  if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
   const { porRede, abaixoDe100 } = window.boardData;
-  
   let items, stats, hasRedeColumn = false;
   
   if (nomeRede === 'Abaixo_100') {
-    items = abaixoDe100;
-    hasRedeColumn = true;
+    items = abaixoDe100; hasRedeColumn = true;
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
     const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
     const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
@@ -1187,38 +1148,20 @@ async function exportBoard(nomeRede) {
 
   const element = container.firstElementChild;
   const height = parseInt(element.style.height);
-  
   const extraMargin = 100;
   const finalHeight = height + extraMargin;
 
   try {
     const canvas = await html2canvas(element, {
-      backgroundColor: currentTheme === 'dark' ? '#0f172a' : 
-                      currentTheme === 'ocean' ? '#ecfeff === 'sunset' ? '#fff7ed' :
-                      currentTheme === 'forest' ? '#f0fdf4' : '#ffffff',
-      scale: 2,
-      width: 600,
-      height: finalHeight,
-      windowWidth: 600,
-      windowHeight: finalHeight,
-      logging: false,
-      useCORS: true,
-      allowTaint: true,
-      scrollX: 0,
-      scrollY: 0,
-      onclone: (clonedDoc) => {
-        const clonedElement = clonedDoc.querySelector('.board-content');
-        if (clonedElement) {
-          clonedElement.style.heightpx';
-        }
-      }
+      backgroundColor: currentTheme === 'dark' ? '#0f172a' : currentTheme === 'ocean' ? '#ecfeff' : currentTheme === 'sunset' ? '#fff7ed' : currentTheme === 'forest' ? '#f0fdf4' : '#ffffff',
+      scale: 2, width: 600, height: finalHeight, windowWidth: 600, windowHeight: finalHeight,
+      logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0,
+      onclone: (clonedDoc) => { const clonedElement = clonedDoc.querySelector('.board-content'); if (clonedElement) { clonedElement.style.height = finalHeight + 'px'; } }
     });
-
     const link = document.createElement('a');
     link.download = `painel-${nomeRede.replace(/[^\w\-]/g, '_')}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-
     console.log(`✓ Painel "${nomeRede}" exportado com sucesso! Altura: ${finalHeight}px`);
   } catch (error) {
     console.error('Erro ao exportar:', error);
@@ -1229,46 +1172,127 @@ async function exportBoard(nomeRede) {
 }
 
 async function exportAllBoards() {
-  if (!window.boardData) {
-    alert('❌ Nenhum dado disponível para exportar');
-    return;
-  }
-
+  if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
   const { porRede, abaixoDe100 } = window.boardData;
   const redes = Object.keys(porRede);
-  
   let total = redes.length;
   if (abaixoDe100.length > 0) total++;
-
   if (!confirm(`Deseja exportar ${total} painéis em PNG?`)) return;
-
-  for (const rede of redes) {
-    await exportBoard(rede);
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
-
-  if (abaixoDe100.length > 0) {
-    await exportBoard('Abaixo_100');
-  }
-
+  for (const rede of redes) { await exportBoard(rede); await new Promise(resolve => setTimeout(resolve, 500)); }
+  if (abaixoDe100.length > 0) { await exportBoard('Abaixo_100'); }
   alert(`✓ ${total} painéis exportados com sucesso!`);
 }
 
+// ===== EXPORTAÇÃO DE DADOS (XLSX) =====
+function exportNetworkToExcel(rede) {
+    if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
+    const { porRede, abaixoDe100 } = window.boardData;
+    let items, sheetName;
+
+    if (rede === 'Abaixo_100') {
+        items = abaixoDe100;
+        sheetName = 'Abaixo de 100%';
+    } else {
+        items = porRede[rede];
+        sheetName = rede;
+    }
+
+    if (!items || items.length === 0) {
+        alert('❌ Nenhum dado encontrado para esta rede.');
+        return;
+    }
+
+    const wb = XLSX.utils.book_new();
+    const wsData = [
+        ['Dependência', 'UF', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+    ];
+    items.forEach(item => {
+        wsData.push([
+            item.dependencia,
+            item.uf,
+            item.meta,
+            item.realizado,
+            item.realizados30,
+            item.falta,
+            item.percentual
+        ]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, `dados_${sheetName.replace(/[^\w\-]/g, '_')}.xlsx`);
+}
+
+function exportAllToExcel() {
+    if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
+    const { porRede, abaixoDe100 } = window.boardData;
+    const wb = XLSX.utils.book_new();
+
+    // Planilha de Resumo
+    const summaryData = [['Rede', 'Agências', 'Meta Total', 'Realizado Total (Dia)', '% Atingimento Geral']];
+    Object.keys(porRede).forEach(rede => {
+        const items = porRede[rede];
+        const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+        const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+        const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+        summaryData.push([rede, items.length, totalMeta, totalReal, pctGeral]);
+    });
+    const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, summaryWs, 'Resumo');
+
+    // Planilhas individuais por rede
+    Object.keys(porRede).forEach(rede => {
+        const items = porRede[rede];
+        const wsData = [
+            ['Dependência', 'UF', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+        ];
+        items.forEach(item => {
+            wsData.push([
+                item.dependencia,
+                item.uf,
+                item.meta,
+                item.realizado,
+                item.realizados30,
+                item.falta,
+                item.percentual
+            ]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, rede.substring(0, 31)); // Limita o nome da aba
+    });
+
+    // Planilha "Abaixo de 100%", se houver dados
+    if (abaixoDe100.length > 0) {
+        const wsData = [
+            ['Dependência', 'UF', 'Rede', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+        ];
+        abaixoDe100.forEach(item => {
+            wsData.push([
+                item.dependencia,
+                item.uf,
+                item.rede,
+                item.meta,
+                item.realizado,
+                item.realizados30,
+                item.falta,
+                item.percentual
+            ]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Abaixo de 100%');
+    }
+
+    XLSX.writeFile(wb, 'dados_completos_contatos_1314.xlsx');
+}
+
+
 // ===== TESTE DE EXPORTAÇÃO =====
 async function testExport() {
-  if (!window.boardData) {
-    alert('❌ Nenhum dado disponível para testar');
-    return;
-  }
-
+  if (!window.boardData) { alert('❌ Nenhum dado disponível para testar'); return; }
   const testResults = document.getElementById('test-results');
   testResults.innerHTML = '<p>Executando testes...</p>';
-
   const { porRede, abaixoDe100 } = window.boardData;
   const redes = Object.keys(porRede);
-  
-  let testResultsHTML = '';
-  let allTestsPassed = true;
+  let testResultsHTML = ''; let allTestsPassed = true;
 
   for (const rede of redes) {
     const items = porRede[rede];
@@ -1276,98 +1300,51 @@ async function testExport() {
     const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
     const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
     const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
-
     const container = document.getElementById('export-container');
     const html = createBoardHTML(rede, items, stats, currentTheme, false);
     container.innerHTML = html;
-
     const element = container.firstElementChild;
     const expectedHeight = parseInt(element.style.height);
-    
     const tableRows = element.querySelectorAll('tbody tr');
     const actualRows = tableRows.length;
     const expectedRows = items.length;
-
     const rowsTest = actualRows === expectedRows;
-    
     let exportTest = false;
     try {
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight,
-        windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true,
-        allowTaint: true, scrollX: 0, scrollY: 0
-      });
+      const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight, windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 });
       exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
-    } catch (error) {
-      console.error('Erro no teste de exportação:', error);
-    }
-
+    } catch (error) { console.error('Erro no teste de exportação:', error); }
     const testPassed = rowsTest && exportTest;
     if (!testPassed) allTestsPassed = false;
-
-    testResultsHTML += `
-      <div class="test-result ${testPassed ? 'test-success' : 'test-error'}">
-        <strong>${rede}:</strong> 
-        Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | 
-        Exportação: ${exportTest ? '✓' : '✗'}
-      </div>
-    `;
-
+    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>${rede}:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
     container.innerHTML = '';
   }
-
   if (abaixoDe100.length > 0) {
     const items = abaixoDe100;
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
     const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
     const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
     const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
-
     const container = document.getElementById('export-container');
     const html = createBoardHTML('Abaixo_100', items, stats, currentTheme, true);
     container.innerHTML = html;
-
     const element = container.firstElementChild;
     const expectedHeight = parseInt(element.style.height);
-    
     const tableRows = element.querySelectorAll('tbody tr');
     const actualRows = tableRows.length;
     const expectedRows = items.length;
-
     const rowsTest = actualRows === expectedRows;
-    
     let exportTest = false;
     try {
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight,
-        windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true,
-        allowTaint: true, scrollX: 0, scrollY: 0
-      });
+      const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight, windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 });
       exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
-    } catch (error) {
-      console.error('Erro no teste de exportação:', error);
-    }
-
+    } catch (error) { console.error('Erro no teste de exportação:', error); }
     const testPassed = rowsTest && exportTest;
     if (!testPassed) allTestsPassed = false;
-
-    testResultsHTML += `
-      <div class="test-result ${testPassed ? 'test-success' : 'test-error'}">
-        <strong>Abaixo de 100%:</strong> 
-        Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | 
-        Exportação: ${exportTest ? '✓' : '✗'}
-      </div>
-    `;
-
+    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>Abaixo de 100%:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
     container.innerHTML = '';
   }
-
-  testResultsHTML = `
-    <div class="test-result ${allTestsPassed ? 'test-success' : 'test-error'}">
-      <strong>Resultado Geral:</strong> ${allTestsPassed ? 'Todos os testes passaram!' : 'Alguns testes falharam.'}
-    </div>
-  ` + testResultsHTML;
-
+  testResultsHTML = `<div class="test-result ${allTestsPassed ? 'test-success' : 'test-error'}"><strong>Resultado Geral:</strong> ${allTestsPassed ? 'Todos os testes passaram!' : 'Alguns testes falharam.'}</div>` + testResultsHTML;
   testResults.innerHTML = testResultsHTML;
 }
 
@@ -1384,60 +1361,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Carregar arquivos
   document.getElementById('file-agencias').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
+    const file = e.target.files[0]; if (!file) return;
     try {
       const rows = await readExcelFile(file);
       const text = rows.map(row => row.slice(0, 6).join(';')).join('\n');
       document.getElementById('txt-agencias').value = text;
-      
-      if (document.getElementById('save-agencias').checked) {
-        localStorage.setItem(LS_KEYS.agencias, text);
-      }
-      
+      if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, text); }
       alert('✓ Agências carregadas com sucesso!');
-    } catch (error) {
-      alert('❌ Erro ao ler arquivo: ' + error.message);
-    }
+    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
   });
 
   document.getElementById('file-carteiras').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
+    const file = e.target.files[0]; if (!file) return;
     try {
       const rows = await readExcelFile(file);
       const text = rows.map(row => row.slice(0, 8).join(';')).join('\n');
       document.getElementById('txt-carteiras').value = text;
-      
-      if (document.getElementById('save-carteiras').checked) {
-        localStorage.setItem(LS_KEYS.carteiras, text);
-      }
-      
+      if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, text); }
       alert('✓ Carteiras carregadas com sucesso!');
-    } catch (error) {
-      alert('❌ Erro ao ler arquivo: ' + error.message);
-    }
+    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
   });
 
   document.getElementById('file-redes').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
+    const file = e.target.files[0]; if (!file) return;
     try {
       const rows = await readExcelFile(file);
       const text = rows.map(row => row.slice(0, 3).join(';')).join('\n');
       document.getElementById('txt-redes').value = text;
-      
-      if (document.getElementById('save-redes').checked) {
-        localStorage.setItem(LS_KEYS.redes, text);
-      }
-      
+      if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, text); }
       alert('✓ Redes carregadas com sucesso!');
-    } catch (error) {
-      alert('❌ Erro ao ler arquivo: ' + error.message);
-    }
+    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
   });
 
   // Processar
@@ -1445,35 +1398,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const agencias = document.getElementById('txt-agencias').value;
     const carteiras = document.getElementById('txt-carteiras').value;
     const redes = document.getElementById('txt-redes').value;
-
-    if (!agencias.trim()) {
-      alert('⚠️ Por favor, insira os dados de agências');
-      return;
-    }
-
+    if (!agencias.trim()) { alert('⚠️ Por favor, insira os dados de agências'); return; }
     try {
-      if (document.getElementById('save-agencias').checked) {
-        localStorage.setItem(LS_KEYS.agencias, agencias);
-      }
-      if (document.getElementById('save-carteiras').checked) {
-        localStorage.setItem(LS_KEYS.carteiras, carteiras);
-      }
-      if (document.getElementById('save-redes').checked) {
-        localStorage.setItem(LS_KEYS.redes, redes);
-      }
-
+      if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, agencias); }
+      if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, carteiras); }
+      if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, redes); }
       const { porRede, todasLinhas } = processData(agencias, carteiras, redes);
       renderBoards(porRede, todasLinhas);
-      
       alert('✓ Painéis gerados com sucesso!');
-    } catch (error) {
-      console.error('Erro ao processar:', error);
-      alert('❌ Erro ao processar dados: ' + error.message);
-    }
+    } catch (error) { console.error('Erro ao processar:', error); alert('❌ Erro ao processar dados: ' + error.message); }
   });
 
   // Exportar todos
   document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
+  document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToExcel);
 
   // Limpar
   document.getElementById('btn-clear').addEventListener('click', () => {
@@ -1490,25 +1428,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Carregar dados salvos
   const savedAgencias = localStorage.getItem(LS_KEYS.agencias);
-  if (savedAgencias) {
-    document.getElementById('txt-agencias').value = savedAgencias;
-    document.getElementById('save-agencias').checked = true;
-  }
+  if (savedAgencias) { document.getElementById('txt-agencias').value = savedAgencias; document.getElementById('save-agencias').checked = true; }
   const savedCarteiras = localStorage.getItem(LS_KEYS.carteiras);
-  if (savedCarteiras) {
-    document.getElementById('txt-carteiras').value = savedCarteiras;
-    document.getElementById('save-carteiras').checked = true;
-  }
+  if (savedCarteiras) { document.getElementById('txt-carteiras').value = savedCarteiras; document.getElementById('save-carteiras').checked = true; }
   const savedRedes = localStorage.getItem(LS_KEYS.redes);
-  if (savedRedes) {
-    document.getElementById('txt-redes').value = savedRedes;
-    document.getElementById('save-redes').checked = true;
-  }
+  if (savedRedes) { document.getElementById('txt-redes').value = savedRedes; document.getElementById('save-redes').checked = true; }
 });
 
 // Expor funções para uso global
 window.exportBoard = exportBoard;
 window.previewBoard = previewBoard;
+window.exportNetworkToExcel = exportNetworkToExcel;
 </script>
 </body>
 </html>
