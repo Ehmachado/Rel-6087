@@ -129,7 +129,7 @@ textarea {
 textarea:focus {
   outline: none;
   border-color: var(--bb-amarelo);
-  box-shadow: 0 0 0 0 3px rgba(255, 204, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
 }
 
 .controls {
@@ -224,7 +224,7 @@ textarea:focus {
 
 .theme-option.active {
   border-color: var(--bb-amarelo);
-  box-shadow: 0 0 0 0 3px rgba(255, 204, 0, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
 }
 
 .theme-classic { background: linear-gradient(135deg, var(--bb-azul), #0052cc); color: white; }
@@ -659,7 +659,9 @@ footer {
               <button class="btn">📁 Carregar Arquivo</button>
               <input type="file" id="file-redes" accept=".xlsx,.xls,.csv" />
             </div>
-            <label style="display: flex; align-items: center; gap: 8px; color: <span>Salvar automaticamente</span>
+            <label style="display: flex; align-items: center; gap: 8px; color: white;">
+              <input type="checkbox" id="save-redes" />
+              <span>Salvar automaticamente</span>
             </label>
           </div>
         </div>
@@ -966,7 +968,7 @@ function renderBoards(porRede, todasLinhas) {
       <div class="board-actions">
         <button class="btn" onclick="previewBoard('${nomeRede}')">👁️ Preview</button>
         <button class="btn" onclick="exportBoard('${nomeRede}')">💾 PNG</button>
-        <button class="btn btn-excel" onclick="exportNetworkToExcel('${nomeRede}')">📊� XLSX</button>
+        <button class="btn btn-excel" onclick="exportNetworkToExcel('${nomeRede}')">📊 XLSX</button>
       </div>
     `;
     boardList.appendChild(card);
@@ -1035,13 +1037,14 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
 
   let tableHeaders = `
     <tr>
-      <th style="width: 12%;">Dep.</th>
+      <th style="width: 16%;">Dep.</th>
       <th style="width: 5%;">UF</th>
       ${hasRedeColumn ? '<th style="width: 15%;">Rede</th>' : ''}
-      <th class="text-right" style="width: 12%;">Contatos Dia</th>
-      <th class="text-right" style="width: 12%;">Realizado Mês</th>
-      <th class="text-right" style="width: 12%;">Falta</th>
-      <th class="text-right" style="width: 12%;">% Ating.</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Meta</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '18%' : '20%';}">Real. (Dia)</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%';};">30 dias</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%';;">Falta</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">% Ating.</th>
     </tr>
   `;
 
@@ -1049,14 +1052,14 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
     const itemBadge = getBadgeClass(item.percentual);
     return `
       <tr>
-        <td style="width: 12%;"><span class="text-bold">${item.dependencia}</span></td>
+        <td style="width: 16%;"><span class="text-bold">${item.dependencia}</span></td>
         <td style="width: 5%;">${item.uf}</td>
         ${hasRedeColumn ? `<td style="width: 15%;">${item.rede}</td>` : ''}
-        <td class="text-right" style="width: 12%;">${formatNumber(item.meta)}</td>
-        <td class="text-right cell-highlight" style="width: 12%;">${formatNumber(item.realizado)}</td>
-        <td class="text-right" style="width: 12%;">${formatNumber(item.realizados30)}</td>
-        <td class="text-right" style="width: 12%; color: ${item.falta > 0 ? '#C62828' : '#2E7D32'};">${formatNumber(item.falta)}</td>
-        <td class="text-right" style="width: 12%;">
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.meta)}</td>
+        <td class="text-right cell-highlight" style="width: ${hasRedeColumn ? '18%' : '20%';}">${formatNumber(item.realizado)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizados30)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'}; color: ${item.falta > 0 ? '#C62828' : '#2E7D32'};">${formatNumber(item.falta)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">
           <span class="cell-badge ${itemBadge.class}">${formatPercent(item.percentual)}</span>
         </td>
       </tr>
@@ -1202,7 +1205,7 @@ function exportNetworkToExcel(rede) {
 
     const wb = XLSX.utils.book_new();
     const wsData = [
-        ['Dependência', 'UF', 'Meta', 'Contatos Dia', 'Realizado Mês', 'Falta', '% Ating.']
+        ['Dependência', 'UF', 'Meta', 'Realizado Dia', '30 dias', 'Falta', '% Ating.']
     ];
     items.forEach(item => {
         wsData.push([
@@ -1210,7 +1213,7 @@ function exportNetworkToExcel(rede) {
             item.uf,
             item.meta,
             item.realizado,
-            item.realizadoMes,
+            item.realizados30,
             item.falta,
             item.percentual
         ]);
@@ -1241,7 +1244,7 @@ function exportAllToExcel() {
     Object.keys(porRede).forEach(rede => {
         const items = porRede[rede];
         const wsData = [
-            ['Dependência', 'UF', 'Meta', 'Contatos Dia', 'Realizado Mês', 'Falta', '% Ating.']
+            ['Dependência', 'UF', 'Meta', 'Realizado Dia', '30 dias', 'Falta', '% Ating.']
         ];
         items.forEach(item => {
             wsData.push([
@@ -1249,7 +1252,7 @@ function exportAllToExcel() {
                 item.uf,
                 item.meta,
                 item.realizado,
-                item.realizadoMes,
+                item.realizados30,
                 item.falta,
                 item.percentual
             ]);
@@ -1261,7 +1264,7 @@ function exportAllToExcel() {
     // Planilha "Abaixo de 100%", se houver dados
     if (abaixoDe100.length > 0) {
         const wsData = [
-            ['Dependência', 'UF', 'Rede', 'Meta', 'Contatos Dia', 'Realizado Mês', 'Falta', '% Ating.']
+            ['Dependência', 'UF', 'Rede', 'Meta', 'Realizado Mês', 'Falta', '% Ating.']
         ];
         abaixoDe100.forEach(item => {
             wsData.push([
@@ -1269,7 +1272,6 @@ function exportAllToExcel() {
                 item.uf,
                 item.rede,
                 item.meta,
-                item.realizado,
                 item.realizadoMes,
                 item.falta,
                 item.percentual
@@ -1313,7 +1315,7 @@ async function testExport() {
     } catch (error) { console.error('Erro no teste de exportação:', error); }
     const testPassed = rowsTest && exportTest;
     if (!testPassed) allTestsPassed = false;
-    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>${rede}:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓�' : '✗'} | Exportação: ${exportTest ? '✓' : '✗�'}</div>`;
+    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>${rede}:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
     container.innerHTML = '';
   }
   if (abaixoDe100.length > 0) {
