@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Super Barreiras — Contatos Rel 6087</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bb-azul: #0033A0;
+  --bb-amarelo: #FFCC00;
+  --bg-dark: #0a0e1f;
+  --text-light: #f8fafc;
+  --text-secondary: #cbd5e1;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+header {
+  background: linear-gradient(135deg, var(--bb-azul) 0%, #0052cc 100%);
+  padding: 30px;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  background: var(--bb-amarelo);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: #000;
+  box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  color: white;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #dbeafe;
+  margin-top: 5px;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.panel h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: var(--bb-amarelo);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.6);
+  color: #e2e8f0;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  resize: vertical;
+  margin-bottom: 15px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--bb-amarelo);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(51, 65, 85, 0.8);
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--bb-amarelo), #ffd700);
+  color: #000;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ffd700, var(--bb-amarelo));
+}
+
+.file-input {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.theme-selector {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 15px;
+}
+
+.theme-selector h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: var(--bb-amarelo);
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.theme-option {
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.theme-option:hover {
+  transform: scale(1.05);
+}
+
+.theme-option.active {
+  border-color: var(--bb-amarelo);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+}
+
+.theme-classic { background: linear-gradient(135deg, #0033A0, #0052cc); color: white; }
+.theme-dark { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; }
+.theme-ocean { background: linear-gradient(135deg, #0891b2, #06b6d4); color: white; }
+.theme-sunset { background: linear-gradient(135deg, #dc2626, #f97316); color: white; }
+.theme-forest { background: linear-gradient(135deg, #059669, #10b981); color: white; }
+
+.results {
+  margin-top: 30px;
+}
+
+.board-list {
+  display: grid;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.board {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.board-actions {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Estilos para exportação */
+.export-container {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+}
+
+.preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow: auto;
+  padding: 20px;
+}
+
+.preview-content {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  position: relative;
+}
+
+.preview-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-content {
+  background: white;
+  width: 600px; /* Aumentado para acomodar mais colunas */
+  font-family: Arial, sans-serif;
+  overflow: visible;
+  position: relative;
+}
+
+.board-content[data-theme="dark"] { background: #0f172a; }
+.board-content[data-theme="ocean"] { background: #ecfeff; }
+.board-content[data-theme="sunset"] { background: #fff7ed; }
+.board-content[data-theme="forest"] { background: #f0fdf4; }
+
+.board-header {
+  padding: 30px 25px;
+  background: linear-gradient(135deg, #0033A0 0%, #0052cc 100%);
+}
+
+.board-header[data-theme="dark"] {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.board-header[data-theme="ocean"] {
+  background: linear-gradient(135deg, #0e7490 0%, #0891b2 100%);
+}
+
+.board-header[data-theme="sunset"] {
+  background: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+}
+
+.board-header[data-theme="forest"] {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+}
+
+.board-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px 25px;
+  border-radius: 50px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.board-logo {
+  width: 50px;
+  height: 50px;
+  background: #FFCC00;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  color: #000;
+}
+
+.board-title-text {
+  text-align: center;
+}
+
+.board-super {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.board-name {
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  margin-top: 2px;
+}
+
+.board-stats {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.stat-badge {
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge-success { background: #2E7D32; color: white; }
+.badge-warning { background: #F9A825; color: #000; }
+.badge-danger { background: #EF6C00; color: white; }
+.badge-critical { background: #C62828; color: white; }
+
+.board-body {
+  padding: 25px 20px;
+  overflow: visible;
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.board-table thead th {
+  background: #E9F1FF;
+  padding: 12px 8px; /* Reduzido padding */
+  text-align: left;
+  font-size: 13px; /* Reduzido fonte */
+  font-weight: 700;
+  color: #0b1026;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.board-table[data-theme="dark"] thead th {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.board-table[data-theme="ocean"] thead th {
+  background: #cffafe;
+  color: #164e63;
+}
+
+.board-table[data-theme="sunset"] thead th {
+  background: #fed7aa;
+  color: #7c2d12;
+}
+
+.board-table[data-theme="forest"] thead th {
+  background: #d1fae5;
+  color: #064e3b;
+}
+
+.board-table tbody td {
+  padding: 12px 8px; /* Reduzido padding */
+  font-size: 13px; /* Reduzido fonte */
+  color: #0b1026;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  line-height: 1.3;
+}
+
+.board-table[data-theme="dark"] tbody td {
+  color: #f1f5f9;
+}
+
+.board-table[data-theme="ocean"] tbody td {
+  color: #164e63;
+}
+
+.board-table[data-theme="sunset"] tbody td {
+  color: #7c2d12;
+}
+
+.board-table[data-theme="forest"] tbody td {
+  color: #064e3b;
+}
+
+.board-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.board-table tbody tr:nth-child(even) {
+  background: #F2F6FF;
+}
+
+.board-table[data-theme="dark"] tbody tr:nth-child(odd) {
+  background: #1e293b;
+}
+
+.board-table[data-theme="dark"] tbody tr:nth-child(even) {
+  background: #0f172a;
+}
+
+.board-table[data-theme="ocean"] tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.board-table[data-theme="ocean"] tbody tr:nth-child(even) {
+  background: #f0fdfa;
+}
+
+.board-table[data-theme="sunset"] tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.board-table[data-theme="sunset"] tbody tr:nth-child(even) {
+  background: #ffedd5;
+}
+
+.board-table[data-theme="forest"] tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.board-table[data-theme="forest"] tbody tr:nth-child(even) {
+  background: #dcfce7;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.cell-highlight {
+  font-weight: 800;
+  color: #0033A0; /* Destaque para contatos do dia */
+}
+
+.cell-badge {
+  display: inline-block;
+  padding: 4px 8px; /* Reduzido padding */
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 12px; /* Reduzido fonte */
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  margin: 25px 0;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.test-info {
+  background: rgba(255, 204, 0, 0.1);
+  border: 1px solid var(--bb-amarelo);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.test-info h3 {
+  color: var(--bb-amarelo);
+  margin-bottom: 10px;
+}
+
+.test-result {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.test-success {
+  background: rgba(46, 125, 50, 0.2);
+  border: 1px solid #2E7D32;
+  color: #4caf50;
+}
+
+.test-error {
+  background: rgba(198, 40, 40, 0.2);
+  border: 1px solid #C62828;
+  color: #f44336;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div class="logo">BB</div>
+        <div>
+          <h1>Painéis por Rede — Rel 6087</h1>
+          <div class="subtitle">Sistema inteligente de visualização e exportação de dados</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-grid">
+      <!-- PAINEL DE ENTRADA -->
+      <div class="panel">
+        <h2>📊 Entrada de Dados</h2>
+
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 10px; color: white;">Planilha de Agências</h3>
+          <div class="hint">6 colunas: Prefixo | Dependência | UF | Total Clientes | Contatos Dia | Contatos 30 dias</div>
+          <textarea id="txt-agencias" placeholder="10;Agência 1001;DF;150;25;80&#10;10;Agência 1002;GO;200;40;150"></textarea>
+          <div class="controls">
+            <div class="file-input">
+              <button class="btn">📁 Carregar Arquivo</button>
+              <input type="file" id="file-agencias" accept=".xlsx,.xls,.csv" />
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; color: white;">
+              <input type="checkbox" id="save-agencias" />
+              <span>Salvar automaticamente</span>
+            </label>
+          </div>
+        </div>
+
+        <hr />
+
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 10px; color: white;">Planilha de Carteiras</h3>
+          <div class="hint">8 colunas: Prefixo | Dependência | UF | Carteira | Tipo | Total Clientes | Contatos Dia | Contatos 30 dias</div>
+          <textarea id="txt-carteiras" placeholder="10;Agência 1001;DF;Carteira A;Varejo;80;15;60&#10;10;Agência 1001;DF;Carteira B;Empresarial;70;10;20"></textarea>
+          <div class="controls">
+            <div class="file-input">
+              <button class="btn">📁 Carregar Arquivo</button>
+              <input type="file" id="file-carteiras" accept=".xlsx,.xls,.csv" />
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; color: white;">
+              <input type="checkbox" id="save-carteiras" />
+              <span>Salvar automaticamente</span>
+            </label>
+          </div>
+        </div>
+
+        <hr />
+
+        <div>
+          <h3 style="font-size: 16px; margin-bottom: 10px; color: white;">Mapeamento de Redes</h3>
+          <div class="hint">3 colunas: Prefixo | Dependência | Nome da Rede</div>
+          <textarea id="txt-redes" placeholder="10;Agência 1001;Rede Norte&#10;20;Agência 2001;Rede Sul"></textarea>
+          <div class="controls">
+            <div class="file-input">
+              <button class="btn">📁 Carregar Arquivo</button>
+              <input type="file" id="file-redes" accept=".xlsx,.xls,.csv" />
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px; color: white;">
+              <input type="checkbox" id="save-redes" />
+              <span>Salvar automaticamente</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="theme-selector">
+          <h3>🎨 Tema dos Painéis</h3>
+          <div class="theme-grid">
+            <div class="theme-option theme-classic active" data-theme="classic">BB Classic</div>
+            <div class="theme-option theme-dark" data-theme="dark">Dark Premium</div>
+            <div class="theme-option theme-ocean" data-theme="ocean">Ocean</div>
+            <div class="theme-option theme-sunset" data-theme="sunset">Sunset</div>
+            <div class="theme-option theme-forest" data-theme="forest">Forest</div>
+          </div>
+        </div>
+
+        <div class="controls" style="margin-top: 25px;">
+          <button class="btn btn-primary" id="btn-processar" style="flex: 1;">⚡ Processar & Gerar Painéis</button>
+        </div>
+      </div>
+
+      <!-- PAINEL DE RESULTADOS -->
+      <div class="panel">
+        <h2>📈 Resultados Gerados</h2>
+        <div class="hint">Painéis organizados por rede com opções de exportação individual ou em lote</div>
+        
+        <div class="controls">
+          <button class="btn btn-primary" id="btn-export-all">💾 Exportar Todas as Redes (PNG)</button>
+          <button class="btn" id="btn-clear">🗑️ Limpar Resultados</button>
+        </div>
+
+        <div id="results-area">
+          <div class="empty-state">
+            Aguardando dados...<br />
+            Preencha os campos ao lado e clique em Processar
+          </div>
+        </div>
+
+        <div class="test-info">
+          <h3>🔧 Teste de Exportação</h3>
+          <p>Use esta ferramenta para verificar se os painéis estão sendo exportados com todas as linhas.</p>
+          <div class="controls">
+            <button class="btn" id="btn-test-export">🧪 Testar Exportação</button>
+          </div>
+          <div id="test-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results" id="board-container"></div>
+  </div>
+
+  <div class="export-container" id="export-container"></div>
+  <div class="preview-container" id="preview-container" style="display: none;">
+    <div class="preview-content">
+      <button class="preview-close" id="preview-close">×</button>
+      <div id="preview-board"></div>
+    </div>
+  </div>
+
+  <footer>
+    Desenvolvido para Banco do Brasil • Aceita delimitadores: <strong>;</strong> <strong>,</strong> ou <strong>TAB</strong>
+  </footer>
+
+<script>
+// ===== CONFIGURAÇÃO E ESTADO =====
+let currentTheme = 'classic';
+const LS_KEYS = {
+  agencias: 'bb_agencias_v4',
+  carteiras: 'bb_carteiras_v4',
+  redes: 'bb_redes_v4'
+};
+
+// ===== FUNÇÕES UTILITÁRIAS =====
+function detectDelimiter(text) {
+  const semicolons = (text.match(/;/g) || []).length;
+  const commas = (text.match(/,/g) || []).length;
+  const tabs = (text.match(/\t/g) || []).length;
+  
+  if (tabs >= semicolons && tabs >= commas) return '\t';
+  if (semicolons >= commas) return ';';
+  return ',';
+}
+
+function parseTable(text) {
+  if (!text || !text.trim()) return [];
+  
+  const lines = text.split(/\r?\n/).filter(line => line.trim());
+  if (lines.length === 0) return [];
+  
+  const delimiter = detectDelimiter(text);
+  return lines.map(line => 
+    line.split(delimiter).map(cell => cell.trim())
+  );
+}
+
+function toNumber(value) {
+  if (typeof value === 'number') return value;
+  const str = String(value).replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+  const num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
+}
+
+function formatNumber(num) {
+  return Math.round(num).toLocaleString('pt-BR');
+}
+
+function formatPercent(num) {
+  return num.toFixed(1).replace('.', ',') + '%';
+}
+
+function getBadgeClass(percent) {
+  if (percent >= 100) return { class: 'badge-success', label: '≥100%' };
+  if (percent >= 80) return { class: 'badge-warning', label: '80-99%' };
+  if (percent >= 50) return { class: 'badge-danger', label: '50-79%' };
+  return { class: 'badge-critical', label: '<50%' };
+}
+
+// ===== PROCESSAMENTO DE ARQUIVOS =====
+async function readExcelFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: true });
+        const filtered = rows.filter(row => 
+          row && row.some(cell => String(cell || '').trim() !== '')
+        );
+        resolve(filtered);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+// ===== PROCESSAMENTO DE DADOS =====
+function processData(agenciasText, carteirasText, redesText) {
+  const agencias = parseTable(agenciasText);
+  const carteiras = parseTable(carteirasText);
+  const redes = parseTable(redesText);
+
+  // 1. Processar carteiras e agrupar por dependência
+  const carteirasPorDep = {};
+  carteiras.forEach(row => {
+    if (row.length < 7) return;
+    const dep = String(row[1] || '').trim();
+    if (!dep) return;
+
+    const totalClientes = toNumber(row[5]);
+    const contatosDia = toNumber(row[6]);
+    const contatos30 = toNumber(row[7]);
+
+    if (!carteirasPorDep[dep]) {
+      carteirasPorDep[dep] = {
+        meta: 0,
+        realizado: 0,
+        realizados30: 0
+      };
+    }
+    carteirasPorDep[dep].meta += totalClientes;
+    carteirasPorDep[dep].realizado += contatosDia;
+    carteirasPorDep[dep].realizados30 += contatos30;
+  });
+
+  // 2. Processar agências
+  const agenciasMap = {};
+  agencias.forEach(row => {
+    if (row.length < 6) return;
+    const dep = String(row[1] || '').trim();
+    if (!dep) return;
+    
+    agenciasMap[dep] = {
+      prefixo: String(row[0] || '').trim(),
+      uf: String(row[2] || '').trim(),
+      totalClientes: toNumber(row[3]),
+      realizado: toNumber(row[4]),
+      realizados30: toNumber(row[5])
+    };
+  });
+
+  // 3. Mapear redes
+  const redePorDep = {};
+  const redePorPrefixo = {};
+  
+  redes.forEach(row => {
+    if (row.length < 3) return;
+    const prefixo = String(row[0] || '').trim();
+    const dep = String(row[1] || '').trim();
+    const rede = String(row[2] || '').trim() || 'Sem Rede';
+    
+    if (dep) redePorDep[dep] = rede;
+    if (prefixo) redePorPrefixo[prefixo] = rede;
+  });
+
+  // 4. Consolidar dados finais
+  const todasDeps = new Set([
+    ...Object.keys(agenciasMap),
+    ...Object.keys(carteirasPorDep)
+  ]);
+
+  const linhas = [];
+  todasDeps.forEach(dep => {
+    const agenciaInfo = agenciasMap[dep];
+    const carteiraInfo = carteirasPorDep[dep];
+
+    if (!agenciaInfo) return; // Pular se não houver info da agência
+
+    let meta, realizado, realizados30;
+
+    if (carteiraInfo) {
+      // Tem carteiras: usa os dados consolidados delas
+      meta = carteiraInfo.meta;
+      realizado = carteiraInfo.realizado;
+      realizados30 = carteiraInfo.realizados30;
+    } else {
+      // Não tem carteiras: usa os dados da planilha de agências
+      meta = agenciaInfo.totalClientes;
+      realizado = agenciaInfo.realizado;
+      realizados30 = agenciaInfo.realizados30;
+    }
+
+    const falta = meta - realizado - realizados30;
+    const pct = meta > 0 ? (realizado / meta) * 100 : 0;
+
+    // Determinar rede
+    let rede = 'Sem Rede';
+    if (redePorDep[dep]) {
+      rede = redePorDep[dep];
+    } else {
+      for (const prefixo in redePorPrefixo) {
+        if (dep.startsWith(prefixo)) {
+          rede = redePorPrefixo[prefixo];
+          break;
+        }
+      }
+    }
+
+    linhas.push({
+      rede,
+      dependencia: dep,
+      uf: agenciaInfo.uf,
+      meta,
+      realizado,
+      realizados30,
+      falta,
+      percentual: pct
+    });
+  });
+
+  // Agrupar por rede
+  const porRede = {};
+  linhas.forEach(linha => {
+    if (!porRede[linha.rede]) {
+      porRede[linha.rede] = [];
+    }
+    porRede[linha.rede].push(linha);
+  });
+
+  return { porRede, todasLinhas: linhas };
+}
+
+// ===== RENDERIZAÇÃO DE PAINÉIS =====
+function renderBoards(porRede, todasLinhas) {
+  const container = document.getElementById('board-container');
+  const resultsArea = document.getElementById('results-area');
+  
+  container.innerHTML = '';
+  resultsArea.innerHTML = '';
+
+  if (Object.keys(porRede).length === 0) {
+    resultsArea.innerHTML = '<div class="empty-state">Nenhum dado processado. Verifique as entradas.</div>';
+    return;
+  }
+
+  const resumoHTML = '<div class="panel"><h2>📋 Resumo dos Painéis</h2><div class="board-list" id="board-list"></div></div>';
+  resultsArea.innerHTML = resumoHTML;
+  const boardList = document.getElementById('board-list');
+
+  const redesOrdenadas = Object.keys(porRede).sort((a, b) => 
+    a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })
+  );
+
+  redesOrdenadas.forEach(nomeRede => {
+    const items = porRede[nomeRede].sort((a, b) => b.percentual - a.percentual);
+    
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    const badge = getBadgeClass(pctGeral);
+
+    const card = document.createElement('div');
+    card.className = 'board';
+    card.innerHTML = `
+      <div style="padding: 25px;">
+        <h3 style="font-size: 22px; color: var(--bb-azul); margin-bottom: 15px;">${nomeRede}</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Atingimento</div>
+            <div style="font-size: 24px; font-weight: 800; color: ${pctGeral >= 100 ? '#2E7D32' : pctGeral >= 80 ? '#F9A825' : '#C62828'};">
+              ${formatPercent(pctGeral)}
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Agências</div>
+            <div style="font-size: 24px; font-weight: 800;">${items.length}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Meta</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalMeta)}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Realizado Dia</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalReal)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="board-actions">
+        <button class="btn" onclick="previewBoard('${nomeRede}')">👁️ Preview</button>
+        <button class="btn" onclick="exportBoard('${nomeRede}')">💾 Exportar PNG</button>
+      </div>
+    `;
+    boardList.appendChild(card);
+  });
+
+  const abaixoDe100 = todasLinhas.filter(l => l.percentual < 100).sort((a, b) => a.percentual - b.percentual);
+  
+  if (abaixoDe100.length > 0) {
+    const totalMeta = abaixoDe100.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = abaixoDe100.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+
+    const card = document.createElement('div');
+    card.className = 'board';
+    card.innerHTML = `
+      <div style="padding: 25px;">
+        <h3 style="font-size: 22px; color: #C62828; margin-bottom: 15px;">⚠️ Agências Abaixo de 100%</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Atingimento Médio</div>
+            <div style="font-size: 24px; font-weight: 800; color: #C62828;">
+              ${formatPercent(pctGeral)}
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Agências</div>
+            <div style="font-size: 24px; font-weight: 800;">${abaixoDe100.length}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Meta Total</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalMeta)}</div>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #64748b;">Realizado Total</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalReal)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="board-actions">
+        <button class="btn" onclick="previewBoard('Abaixo_100')">👁️ Preview</button>
+        <button class="btn" onclick="exportBoard('Abaixo_100')">💾 Exportar PNG</button>
+      </div>
+    `;
+    boardList.appendChild(card);
+  }
+
+  window.boardData = { porRede, abaixoDe100 };
+}
+
+// ===== EXPORTAÇÃO DE PAINÉIS =====
+function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
+  const badge = getBadgeClass(stats.percentual);
+  
+  const HEADER_HEIGHT = 250;
+  const ROW_HEIGHT = 38; // Reduzido para mais linhas
+  const TABLE_HEADER_HEIGHT = 55;
+  const PADDING = 80;
+  const FOOTER_HEIGHT = 50;
+  
+  const tableHeight = TABLE_HEADER_HEIGHT + (items.length * ROW_HEIGHT);
+  const height = Math.max(900, HEADER_HEIGHT + tableHeight + PADDING + FOOTER_HEIGHT);
+
+  const themeMap = {
+    'classic': '',
+    'dark': 'dark',
+    'ocean': 'ocean',
+    'sunset': 'sunset',
+    'forest': 'forest'
+  };
+
+  const themeAttr = themeMap[theme] || '';
+
+  let tableHeaders = `
+    <tr>
+      <th style="width: 16%;">Dep.</th>
+      <th style="width: 5%;">UF</th>
+      ${hasRedeColumn ? '<th style="width: 15%;">Rede</th>' : ''}
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Meta</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Real. (Dia)</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">30 dias</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Falta</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">% Ating.</th>
+    </tr>
+  `;
+
+  let tableRows = items.map(item => {
+    const itemBadge = getBadgeClass(item.percentual);
+    return `
+      <tr>
+        <td style="width: 16%;"><span class="text-bold">${item.dependencia}</span></td>
+        <td style="width: 5%;">${item.uf}</td>
+        ${hasRedeColumn ? `<td style="width: 15%;">${item.rede}</td>` : ''}
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.meta)}</td>
+        <td class="text-right cell-highlight" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizado)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizados30)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'}; color: ${item.falta > 0 ? '#C62828' : '#2E7D32'};">${formatNumber(item.falta)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">
+          <span class="cell-badge ${itemBadge.class}">${formatPercent(item.percentual)}</span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <div class="board-content" data-theme="${themeAttr}" style="height: ${height}px; width: 600px; overflow: visible;">
+      <div class="board-header" data-theme="${themeAttr}">
+        <div class="board-title-wrap">
+          <div class="board-logo">BB</div>
+          <div class="board-title-text">
+            <div class="board-super">Super Barreiras</div>
+            <div class="board-name">${nomeRede}</div>
+          </div>
+        </div>
+        <div class="board-stats">
+          <span class="stat-badge ${badge.class}">${formatPercent(stats.percentual)}</span>
+          <span>Agências: <strong>${items.length}</strong></span>
+          <span>Meta: <strong>${formatNumber(stats.meta)}</strong></span>
+          <span>Realizado Dia: <strong>${formatNumber(stats.realizado)}</strong></span>
+        </div>
+      </div>
+      <div class="board-body">
+        <table class="board-table" data-theme="${themeAttr}">
+          <thead>${tableHeaders}</thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function previewBoard(nomeRede) {
+  if (!window.boardData) {
+    alert('❌ Nenhum dado disponível para visualizar');
+    return;
+  }
+
+  const { porRede, abaixoDe100 } = window.boardData;
+  
+  let items, stats, hasRedeColumn = false;
+  
+  if (nomeRede === 'Abaixo_100') {
+    items = abaixoDe100;
+    hasRedeColumn = true;
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    nomeRede = '⚠️ Abaixo de 100%';
+  } else {
+    items = porRede[nomeRede];
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+  }
+
+  const previewContainer = document.getElementById('preview-container');
+  const previewBoard = document.getElementById('preview-board');
+  
+  const html = createBoardHTML(nomeRede, items, stats, currentTheme, hasRedeColumn);
+  previewBoard.innerHTML = html;
+  
+  previewContainer.style.display = 'flex';
+  
+  document.getElementById('preview-close').onclick = () => {
+    previewContainer.style.display = 'none';
+  };
+  
+  previewContainer.onclick = (e) => {
+    if (e.target === previewContainer) {
+      previewContainer.style.display = 'none';
+    }
+  };
+}
+
+async function exportBoard(nomeRede) {
+  if (!window.boardData) {
+    alert('❌ Nenhum dado disponível para exportar');
+    return;
+  }
+
+  const { porRede, abaixoDe100 } = window.boardData;
+  
+  let items, stats, hasRedeColumn = false;
+  
+  if (nomeRede === 'Abaixo_100') {
+    items = abaixoDe100;
+    hasRedeColumn = true;
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    nomeRede = '⚠️ Abaixo de 100%';
+  } else {
+    items = porRede[nomeRede];
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+  }
+
+  const container = document.getElementById('export-container');
+  const html = createBoardHTML(nomeRede, items, stats, currentTheme, hasRedeColumn);
+  container.innerHTML = html;
+
+  const element = container.firstElementChild;
+  const height = parseInt(element.style.height);
+  
+  const extraMargin = 100;
+  const finalHeight = height + extraMargin;
+
+  try {
+    const canvas = await html2canvas(element, {
+      backgroundColor: currentTheme === 'dark' ? '#0f172a' : 
+                      currentTheme === 'ocean' ? '#ecfeff' :
+                      currentTheme === 'sunset' ? '#fff7ed' :
+                      currentTheme === 'forest' ? '#f0fdf4' : '#ffffff',
+      scale: 2,
+      width: 600,
+      height: finalHeight,
+      windowWidth: 600,
+      windowHeight: finalHeight,
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
+      onclone: (clonedDoc) => {
+        const clonedElement = clonedDoc.querySelector('.board-content');
+        if (clonedElement) {
+          clonedElement.style.height = finalHeight + 'px';
+        }
+      }
+    });
+
+    const link = document.createElement('a');
+    link.download = `painel-${nomeRede.replace(/[^\w\-]/g, '_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    console.log(`✓ Painel "${nomeRede}" exportado com sucesso! Altura: ${finalHeight}px`);
+  } catch (error) {
+    console.error('Erro ao exportar:', error);
+    alert('❌ Erro ao exportar painel. Tente novamente.');
+  } finally {
+    container.innerHTML = '';
+  }
+}
+
+async function exportAllBoards() {
+  if (!window.boardData) {
+    alert('❌ Nenhum dado disponível para exportar');
+    return;
+  }
+
+  const { porRede, abaixoDe100 } = window.boardData;
+  const redes = Object.keys(porRede);
+  
+  let total = redes.length;
+  if (abaixoDe100.length > 0) total++;
+
+  if (!confirm(`Deseja exportar ${total} painéis em PNG?`)) return;
+
+  for (const rede of redes) {
+    await exportBoard(rede);
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  if (abaixoDe100.length > 0) {
+    await exportBoard('Abaixo_100');
+  }
+
+  alert(`✓ ${total} painéis exportados com sucesso!`);
+}
+
+// ===== TESTE DE EXPORTAÇÃO =====
+async function testExport() {
+  if (!window.boardData) {
+    alert('❌ Nenhum dado disponível para testar');
+    return;
+  }
+
+  const testResults = document.getElementById('test-results');
+  testResults.innerHTML = '<p>Executando testes...</p>';
+
+  const { porRede, abaixoDe100 } = window.boardData;
+  const redes = Object.keys(porRede);
+  
+  let testResultsHTML = '';
+  let allTestsPassed = true;
+
+  for (const rede of redes) {
+    const items = porRede[rede];
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+
+    const container = document.getElementById('export-container');
+    const html = createBoardHTML(rede, items, stats, currentTheme, false);
+    container.innerHTML = html;
+
+    const element = container.firstElementChild;
+    const expectedHeight = parseInt(element.style.height);
+    
+    const tableRows = element.querySelectorAll('tbody tr');
+    const actualRows = tableRows.length;
+    const expectedRows = items.length;
+
+    const rowsTest = actualRows === expectedRows;
+    
+    let exportTest = false;
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight,
+        windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true,
+        allowTaint: true, scrollX: 0, scrollY: 0
+      });
+      exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
+    } catch (error) {
+      console.error('Erro no teste de exportação:', error);
+    }
+
+    const testPassed = rowsTest && exportTest;
+    if (!testPassed) allTestsPassed = false;
+
+    testResultsHTML += `
+      <div class="test-result ${testPassed ? 'test-success' : 'test-error'}">
+        <strong>${rede}:</strong> 
+        Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | 
+        Exportação: ${exportTest ? '✓' : '✗'}
+      </div>
+    `;
+
+    container.innerHTML = '';
+  }
+
+  if (abaixoDe100.length > 0) {
+    const items = abaixoDe100;
+    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
+    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
+    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+
+    const container = document.getElementById('export-container');
+    const html = createBoardHTML('Abaixo_100', items, stats, currentTheme, true);
+    container.innerHTML = html;
+
+    const element = container.firstElementChild;
+    const expectedHeight = parseInt(element.style.height);
+    
+    const tableRows = element.querySelectorAll('tbody tr');
+    const actualRows = tableRows.length;
+    const expectedRows = items.length;
+
+    const rowsTest = actualRows === expectedRows;
+    
+    let exportTest = false;
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight,
+        windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true,
+        allowTaint: true, scrollX: 0, scrollY: 0
+      });
+      exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
+    } catch (error) {
+      console.error('Erro no teste de exportação:', error);
+    }
+
+    const testPassed = rowsTest && exportTest;
+    if (!testPassed) allTestsPassed = false;
+
+    testResultsHTML += `
+      <div class="test-result ${testPassed ? 'test-success' : 'test-error'}">
+        <strong>Abaixo de 100%:</strong> 
+        Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | 
+        Exportação: ${exportTest ? '✓' : '✗'}
+      </div>
+    `;
+
+    container.innerHTML = '';
+  }
+
+  testResultsHTML = `
+    <div class="test-result ${allTestsPassed ? 'test-success' : 'test-error'}">
+      <strong>Resultado Geral:</strong> ${allTestsPassed ? 'Todos os testes passaram!' : 'Alguns testes falharam.'}
+    </div>
+  ` + testResultsHTML;
+
+  testResults.innerHTML = testResultsHTML;
+}
+
+// ===== EVENT LISTENERS =====
+document.addEventListener('DOMContentLoaded', () => {
+  // Temas
+  document.querySelectorAll('.theme-option').forEach(option => {
+    option.addEventListener('click', () => {
+      document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+      option.classList.add('active');
+      currentTheme = option.dataset.theme;
+    });
+  });
+
+  // Carregar arquivos
+  document.getElementById('file-agencias').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+      const rows = await readExcelFile(file);
+      const text = rows.map(row => row.slice(0, 6).join(';')).join('\n');
+      document.getElementById('txt-agencias').value = text;
+      
+      if (document.getElementById('save-agencias').checked) {
+        localStorage.setItem(LS_KEYS.agencias, text);
+      }
+      
+      alert('✓ Agências carregadas com sucesso!');
+    } catch (error) {
+      alert('❌ Erro ao ler arquivo: ' + error.message);
+    }
+  });
+
+  document.getElementById('file-carteiras').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+      const rows = await readExcelFile(file);
+      const text = rows.map(row => row.slice(0, 8).join(';')).join('\n');
+      document.getElementById('txt-carteiras').value = text;
+      
+      if (document.getElementById('save-carteiras').checked) {
+        localStorage.setItem(LS_KEYS.carteiras, text);
+      }
+      
+      alert('✓ Carteiras carregadas com sucesso!');
+    } catch (error) {
+      alert('❌ Erro ao ler arquivo: ' + error.message);
+    }
+  });
+
+  document.getElementById('file-redes').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+      const rows = await readExcelFile(file);
+      const text = rows.map(row => row.slice(0, 3).join(';')).join('\n');
+      document.getElementById('txt-redes').value = text;
+      
+      if (document.getElementById('save-redes').checked) {
+        localStorage.setItem(LS_KEYS.redes, text);
+      }
+      
+      alert('✓ Redes carregadas com sucesso!');
+    } catch (error) {
+      alert('❌ Erro ao ler arquivo: ' + error.message);
+    }
+  });
+
+  // Processar
+  document.getElementById('btn-processar').addEventListener('click', () => {
+    const agencias = document.getElementById('txt-agencias').value;
+    const carteiras = document.getElementById('txt-carteiras').value;
+    const redes = document.getElementById('txt-redes').value;
+
+    if (!agencias.trim()) {
+      alert('⚠️ Por favor, insira os dados de agências');
+      return;
+    }
+
+    try {
+      if (document.getElementById('save-agencias').checked) {
+        localStorage.setItem(LS_KEYS.agencias, agencias);
+      }
+      if (document.getElementById('save-carteiras').checked) {
+        localStorage.setItem(LS_KEYS.carteiras, carteiras);
+      }
+      if (document.getElementById('save-redes').checked) {
+        localStorage.setItem(LS_KEYS.redes, redes);
+      }
+
+      const { porRede, todasLinhas } = processData(agencias, carteiras, redes);
+      renderBoards(porRede, todasLinhas);
+      
+      alert('✓ Painéis gerados com sucesso!');
+    } catch (error) {
+      console.error('Erro ao processar:', error);
+      alert('❌ Erro ao processar dados: ' + error.message);
+    }
+  });
+
+  // Exportar todos
+  document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
+
+  // Limpar
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (confirm('Deseja limpar todos os resultados?')) {
+      document.getElementById('results-area').innerHTML = '<div class="empty-state">Aguardando dados...<br />Preencha os campos ao lado e clique em Processar</div>';
+      document.getElementById('board-container').innerHTML = '';
+      document.getElementById('test-results').innerHTML = '';
+      window.boardData = null;
+    }
+  });
+
+  // Testar exportação
+  document.getElementById('btn-test-export').addEventListener('click', testExport);
+
+  // Carregar dados salvos
+  const savedAgencias = localStorage.getItem(LS_KEYS.agencias);
+  if (savedAgencias) {
+    document.getElementById('txt-agencias').value = savedAgencias;
+    document.getElementById('save-agencias').checked = true;
+  }
+  const savedCarteiras = localStorage.getItem(LS_KEYS.carteiras);
+  if (savedCarteiras) {
+    document.getElementById('txt-carteiras').value = savedCarteiras;
+    document.getElementById('save-carteiras').checked = true;
+  }
+  const savedRedes = localStorage.getItem(LS_KEYS.redes);
+  if (savedRedes) {
+    document.getElementById('txt-redes').value = savedRedes;
+    document.getElementById('save-redes').checked = true;
+  }
+});
+
+// Expor funções para uso global
+window.exportBoard = exportBoard;
+window.previewBoard = previewBoard;
+</script>
+</body>
+</html>
