@@ -883,7 +883,7 @@ function processData(agenciasText, carteirasText, redesText) {
     }
 
     const falta = meta - realizado - realizados30;
-    const pct = meta > 0 ? (realizado / meta) * 100 : 0;
+    const pct = meta > 0 ? ((realizado + realizados30) / meta) * 100 : 0; // CÁLCULO CORRIGIDO
 
     let rede = 'Sem Rede';
     if (redePorDep[dep]) {
