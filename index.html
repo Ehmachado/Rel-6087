@@ -129,7 +129,7 @@ textarea {
 textarea:focus {
   outline: none;
   border-color: var(--bb-amarelo);
-  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
+  box-shadow: 0 0 0 0 3px rgba(255, 204, 0, 0.1);
 }
 
 .controls {
@@ -224,7 +224,7 @@ textarea:focus {
 
 .theme-option.active {
   border-color: var(--bb-amarelo);
-  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+  box-shadow: 0 0 0 0 3px rgba(255, 204, 0, 0.2);
 }
 
 .theme-classic { background: linear-gradient(135deg, var(--bb-azul), #0052cc); color: white; }
@@ -882,8 +882,10 @@ function processData(agenciasText, carteirasText, redesText) {
       realizados30 = agenciaInfo.realizados30;
     }
 
-    const falta = meta - realizado - realizados30;
-    const pct = meta > 0 ? ((realizado + realizados30) / meta) * 100 : 0; // CÁLCULO CORRIGIDO
+    // NOVO CÁLCULO
+    const realizadoMes = realizado + realizados30;
+    const falta = meta - realizadoMes;
+    const pct = meta > 0 ? (realizadoMes / meta) * 100 : 0;
 
     let rede = 'Sem Rede';
     if (redePorDep[dep]) {
@@ -898,7 +900,7 @@ function processData(agenciasText, carteirasText, redesText) {
     }
 
     linhas.push({
-      rede, dependencia: dep, uf: agenciaInfo.uf, meta, realizado, realizados30, falta, percentual: pct
+      rede, dependencia: dep, uf: agenciaInfo.uf, meta, realizado, realizados30, realizadoMes, falta, percentual: pct
     });
   });
 
@@ -924,7 +926,7 @@ function renderBoards(porRede, todasLinhas) {
     return;
   }
 
-  const resumoHTML = '<div class="panel"><h2>📋 Resumo dos Painéis</h2><div class="board-list" id="board-list"></div></div>';
+  const resumoHTML = '<div class="panel"><h2>📋� Resumo dos Painéis</h2><div class="board-list" id="board-list"></div></div></div>';
   resultsArea.innerHTML = resumoHTML;
   const boardList = document.getElementById('board-list');
 
@@ -934,8 +936,8 @@ function renderBoards(porRede, todasLinhas) {
     const items = porRede[nomeRede].sort((a, b) => b.percentual - a.percentual);
     
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
     const badge = getBadgeClass(pctGeral);
 
     const card = document.createElement('div');
@@ -959,8 +961,8 @@ function renderBoards(porRede, todasLinhas) {
             <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalMeta)}</div>
           </div>
           <div>
-            <div style="font-size: 13px; color: #64748b;">Realizado Dia</div>
-            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalReal)}</div>
+            <div style="font-size: 13px; color: #64748b;">Realizado Mês</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalRealMes)}</div>
           </div>
         </div>
       </div>
@@ -977,8 +979,8 @@ function renderBoards(porRede, todasLinhas) {
   
   if (abaixoDe100.length > 0) {
     const totalMeta = abaixoDe100.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = abaixoDe100.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+    const totalRealMes = abaixoDe100.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
 
     const card = document.createElement('div');
     card.className = 'board';
@@ -1002,7 +1004,7 @@ function renderBoards(porRede, todasLinhas) {
           </div>
           <div>
             <div style="font-size: 13px; color: #64748b;">Realizado Total</div>
-            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalReal)}</div>
+            <div style="font-size: 24px; font-weight: 800;">${formatNumber(totalRealMes)}</div>
           </div>
         </div>
       </div>
@@ -1012,7 +1014,7 @@ function renderBoards(porRede, todasLinhas) {
         <button class="btn btn-excel" onclick="exportNetworkToExcel('Abaixo_100')">📊 XLSX</button>
       </div>
     `;
-    boardList.appendChild(card);
+>     boardList.appendChild(card);
   }
 
   window.boardData = { porRede, abaixoDe100 };
@@ -1031,7 +1033,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
   const tableHeight = TABLE_HEADER_HEIGHT + (items.length * ROW_HEIGHT);
   const height = Math.max(900, HEADER_HEIGHT + tableHeight + PADDING + FOOTER_HEIGHT);
 
-  const themeMap = { 'classic': '', 'dark': 'dark', 'ocean': 'ocean', 'sunset': 'sunset', 'forest': 'forest' };
+  const themeMap = { 'classic': '', 'dark': 'dark', 'ocean': 'ocean', 'sunset', 'sunset', 'forest': 'forest' };
   const themeAttr = themeMap[theme] || '';
 
   let tableHeaders = `
@@ -1041,7 +1043,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
       ${hasRedeColumn ? '<th style="width: 15%;">Rede</th>' : ''}
       <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Meta</th>
       <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Real. (Dia)</th>
-      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">30 dias</th>
+      <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Contatos Mês</th>
       <th class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">Falta</th>
       <th class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">% Ating.</th>
     </tr>
@@ -1056,7 +1058,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
         ${hasRedeColumn ? `<td style="width: 15%;">${item.rede}</td>` : ''}
         <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.meta)}</td>
         <td class="text-right cell-highlight" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizado)}</td>
-        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizados30)}</td>
+        <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'};">${formatNumber(item.realizadoMes)}</td>
         <td class="text-right" style="width: ${hasRedeColumn ? '14%' : '16%'}; color: ${item.falta > 0 ? '#C62828' : '#2E7D32'};">${formatNumber(item.falta)}</td>
         <td class="text-right" style="width: ${hasRedeColumn ? '15%' : '15%'};">
           <span class="cell-badge ${itemBadge.class}">${formatPercent(item.percentual)}</span>
@@ -1079,7 +1081,7 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
           <span class="stat-badge ${badge.class}">${formatPercent(stats.percentual)}</span>
           <span>Agências: <strong>${items.length}</strong></span>
           <span>Meta: <strong>${formatNumber(stats.meta)}</strong></span>
-          <span>Realizado Dia: <strong>${formatNumber(stats.realizado)}</strong></span>
+          <span>Realizado Mês: <strong>${formatNumber(stats.realizado)}</strong></span>
         </div>
       </div>
       <div class="board-body">
@@ -1100,16 +1102,16 @@ function previewBoard(nomeRede) {
   if (nomeRede === 'Abaixo_100') {
     items = abaixoDe100; hasRedeColumn = true;
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
     nomeRede = '⚠️ Abaixo de 100%';
   } else {
     items = porRede[nomeRede];
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
   }
 
   const previewContainer = document.getElementById('preview-container');
@@ -1130,16 +1132,16 @@ async function exportBoard(nomeRede) {
   if (nomeRede === 'Abaixo_100') {
     items = abaixoDe100; hasRedeColumn = true;
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
     nomeRede = '⚠️ Abaixo de 100%';
   } else {
     items = porRede[nomeRede];
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+    stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
   }
 
   const container = document.getElementById('export-container');
@@ -1154,8 +1156,16 @@ async function exportBoard(nomeRede) {
   try {
     const canvas = await html2canvas(element, {
       backgroundColor: currentTheme === 'dark' ? '#0f172a' : currentTheme === 'ocean' ? '#ecfeff' : currentTheme === 'sunset' ? '#fff7ed' : currentTheme === 'forest' ? '#f0fdf4' : '#ffffff',
-      scale: 2, width: 600, height: finalHeight, windowWidth: 600, windowHeight: finalHeight,
-      logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0,
+      scale: 2,
+      width: 600,
+      height: finalHeight,
+      windowWidth: 600,
+      windowHeight: finalHeight,
+      logging: false,
+      useCORS: true,
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
       onclone: (clonedDoc) => { const clonedElement = clonedDoc.querySelector('.board-content'); if (clonedElement) { clonedElement.style.height = finalHeight + 'px'; } }
     });
     const link = document.createElement('a');
@@ -1165,7 +1175,7 @@ async function exportBoard(nomeRede) {
     console.log(`✓ Painel "${nomeRede}" exportado com sucesso! Altura: ${finalHeight}px`);
   } catch (error) {
     console.error('Erro ao exportar:', error);
-    alert('❌ Erro ao exportar painel. Tente novamente.');
+>     alert('❌ Erro ao exportar painel. Tente novamente.');
   } finally {
     container.innerHTML = '';
   }
@@ -1204,7 +1214,7 @@ function exportNetworkToExcel(rede) {
 
     const wb = XLSX.utils.book_new();
     const wsData = [
-        ['Dependência', 'UF', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+        ['Dependência', 'UF', 'Meta', 'Realizado (Dia', 'Contatos Mês', 'Falta', '% Ating.']
     ];
     items.forEach(item => {
         wsData.push([
@@ -1212,7 +1222,7 @@ function exportNetworkToExcel(rede) {
             item.uf,
             item.meta,
             item.realizado,
-            item.realizados30,
+            item.realizadoMes,
             item.falta,
             item.percentual
         ]);
@@ -1228,22 +1238,23 @@ function exportAllToExcel() {
     const wb = XLSX.utils.book_new();
 
     // Planilha de Resumo
-    const summaryData = [['Rede', 'Agências', 'Meta Total', 'Realizado Total (Dia)', '% Atingimento Geral']];
+    const summaryData = [['Rede', 'Agências', 'Meta Total', 'Realizado Total (Mês)', '% Atingimento Geral']];
     Object.keys(porRede).forEach(rede => {
         const items = porRede[rede];
         const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-        const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-        const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-        summaryData.push([rede, items.length, totalMeta, totalReal, pctGeral]);
+        const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+        const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+        summaryData.push([rede, items.length, totalMeta, totalRealMes, pctGeral]);
     });
     const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, summaryWs, 'Resumo');
     XLSX.utils.book_append_sheet(wb, summaryWs, 'Resumo');
 
     // Planilhas individuais por rede
     Object.keys(porRede).forEach(rede => {
         const items = porRede[rede];
         const wsData = [
-            ['Dependência', 'UF', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+            ['Dependência', 'UF', 'Meta', 'Realizado (Dia)', 'Contatos Mês', 'Falta', '% Ating.']
         ];
         items.forEach(item => {
             wsData.push([
@@ -1251,39 +1262,38 @@ function exportAllToExcel() {
                 item.uf,
                 item.meta,
                 item.realizado,
-                item.realizados30,
+                item.realizadoMes,
                 item.falta,
                 item.percentual
             ]);
         });
         const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, rede.substring(0, 31)); // Limita o nome da aba
+        XLSX.utils.book_append_sheet(wb, ws, rede.substring(0, 31));
     });
 
     // Planilha "Abaixo de 100%", se houver dados
     if (abaixoDe100.length > 0) {
         const wsData = [
-            ['Dependência', 'UF', 'Rede', 'Meta', 'Realizado (Dia)', '30 dias', 'Falta', '% Ating.']
+            ['Dependência', 'UF', 'Rede', 'Meta', 'Realizado (Dia)', 'Contatos Mês', 'Falta', '% Ating.']
         ];
-        abaixoDe100.forEach(item => {
+>         abaixoDe100.forEach(item => {
             wsData.push([
                 item.dependencia,
                 item.uf,
                 item.rede,
-                item.meta,
-                item.realizado,
-                item.realizados30,
-                item.falta,
-                item.percentual
-            ]);
-        });
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, 'Abaixo de 100%');
-    }
+>                 item.meta,
+>                 item.realizado,
+>                 item.realizadoMes,
+>                 item.falta,
+>                 item.percentual
+>             ]);
+>         });
+>         const ws = XLSX.utils.aoa_to_sheet(wsData);
+>         XLSX.utils.book_append_sheet(wb, ws, 'Abaixo de 100%');
+>     }
 
     XLSX.writeFile(wb, 'dados_completos_contatos_1314.xlsx');
 }
-
 
 // ===== TESTE DE EXPORTAÇÃO =====
 async function testExport() {
@@ -1297,9 +1307,9 @@ async function testExport() {
   for (const rede of redes) {
     const items = porRede[rede];
     const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
+    const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
+    const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+    const stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
     const container = document.getElementById('export-container');
     const html = createBoardHTML(rede, items, stats, currentTheme, false);
     container.innerHTML = html;
@@ -1314,131 +1324,134 @@ async function testExport() {
       const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight, windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 });
       exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
     } catch (error) { console.error('Erro no teste de exportação:', error); }
-    const testPassed = rowsTest && exportTest;
-    if (!testPassed) allTestsPassed = false;
-    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>${rede}:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
-    container.innerHTML = '';
+>     const testPassed = rowsTest && exportTest;
+     if (!testPassed) allTestsPassed = false;
+>     testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>${rede}:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗�'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
+>     container.innerHTML = '';
   }
-  if (abaixoDe100.length > 0) {
-    const items = abaixoDe100;
-    const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-    const totalReal = items.reduce((sum, item) => sum + item.realizado, 0);
-    const pctGeral = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-    const stats = { meta: totalMeta, realizado: totalReal, percentual: pctGeral };
-    const container = document.getElementById('export-container');
-    const html = createBoardHTML('Abaixo_100', items, stats, currentTheme, true);
-    container.innerHTML = html;
-    const element = container.firstElementChild;
-    const expectedHeight = parseInt(element.style.height);
-    const tableRows = element.querySelectorAll('tbody tr');
-    const actualRows = tableRows.length;
-    const expectedRows = items.length;
-    const rowsTest = actualRows === expectedRows;
-    let exportTest = false;
-    try {
-      const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight, windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 });
-      exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
-    } catch (error) { console.error('Erro no teste de exportação:', error); }
-    const testPassed = rowsTest && exportTest;
-    if (!testPassed) allTestsPassed = false;
-    testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>Abaixo de 100%:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
-    container.innerHTML = '';
-  }
-  testResultsHTML = `<div class="test-result ${allTestsPassed ? 'test-success' : 'test-error'}"><strong>Resultado Geral:</strong> ${allTestsPassed ? 'Todos os testes passaram!' : 'Alguns testes falharam.'}</div>` + testResultsHTML;
-  testResults.innerHTML = testResultsHTML;
-}
+>   if (abaixoDe100.length > 0) {
+>     const items = abaixoDe100;
+>     const totalMeta = abaixoDe100.reduce((sum, item) => sum + item.meta, 0);
+>     const totalRealMes = abaixoDe100.reduce((sum, item) => sum + item.realizadoMes, 0);
+     const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
+>     const stats = { meta: totalMeta, realizado: totalRealMes, percentual: pctGeral };
+     const container = document.getElementById('export-container');
+>     const html = createBoardHTML('Abaixo_100', items, stats, currentTheme, true);
+>     container.innerHTML = html;
+>     const element = container.firstElementChild;
+>     const expectedHeight = parseInt(element.style.height);
+>     const tableRows = element.querySelectorAll('tbody tr');
+>     const actualRows = tableRows.length;
+>     const expectedRows = items.length;
+>     const rowsTest = actualRows === expectedRows;
+>     let exportTest = false;
+>     try {
+>       const canvas = await html2canvas(element, { backgroundColor: '#ffffff', scale: 2, width: 600, height: expectedHeight, windowWidth: 600, windowHeight: expectedHeight, logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 });
+>       exportTest = canvas.width === 1200 && canvas.height === expectedHeight * 2;
+>     } catch (error) { console.error('Erro no teste de exportação:', error); }
+>     const testPassed = rowsTest && exportTest;
+>     if (!testPassed) allTestsPassed = false;
+>     testResultsHTML += `<div class="test-result ${testPassed ? 'test-success' : 'test-error'}"><strong>Abaixo de 100%:</strong> Linhas: ${actualRows}/${expectedRows} ${rowsTest ? '✓' : '✗'} | Exportação: ${exportTest ? '✓' : '✗'}</div>`;
+>     container.innerHTML = '';
+>   }
+>   testResultsHTML = `<div class="test-result ${allTestsPassed ? 'test-success' : 'test-error'}"><strong>Resultado Geral:</strong> ${allTestsPassed ? 'Todos os testes passaram!' : 'Alguns testes falharam.'}</div>` + testResultsHTML;
+>   testResults.innerHTML = testResultsHTML;
+> }
 
 // ===== EVENT LISTENERS =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Temas
-  document.querySelectorAll('.theme-option').forEach(option => {
-    option.addEventListener('click', () => {
-      document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
-      option.classList.add('active');
-      currentTheme = option.dataset.theme;
-    });
-  });
-
-  // Carregar arquivos
-  document.getElementById('file-agencias').addEventListener('change', async (e) => {
-    const file = e.target.files[0]; if (!file) return;
-    try {
-      const rows = await readExcelFile(file);
-      const text = rows.map(row => row.slice(0, 6).join(';')).join('\n');
-      document.getElementById('txt-agencias').value = text;
-      if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, text); }
-      alert('✓ Agências carregadas com sucesso!');
-    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
-  });
-
-  document.getElementById('file-carteiras').addEventListener('change', async (e) => {
-    const file = e.target.files[0]; if (!file) return;
-    try {
-      const rows = await readExcelFile(file);
-      const text = rows.map(row => row.slice(0, 8).join(';')).join('\n');
-      document.getElementById('txt-carteiras').value = text;
-      if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, text); }
-      alert('✓ Carteiras carregadas com sucesso!');
-    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
-  });
-
-  document.getElementById('file-redes').addEventListener('change', async (e) => {
-    const file = e.target.files[0]; if (!file) return;
-    try {
-      const rows = await readExcelFile(file);
-      const text = rows.map(row => row.slice(0, 3).join(';')).join('\n');
-      document.getElementById('txt-redes').value = text;
-      if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, text); }
-      alert('✓ Redes carregadas com sucesso!');
-    } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
-  });
-
-  // Processar
-  document.getElementById('btn-processar').addEventListener('click', () => {
-    const agencias = document.getElementById('txt-agencias').value;
-    const carteiras = document.getElementById('txt-carteiras').value;
-    const redes = document.getElementById('txt-redes').value;
-    if (!agencias.trim()) { alert('⚠️ Por favor, insira os dados de agências'); return; }
-    try {
-      if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, agencias); }
-      if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, carteiras); }
-      if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, redes); }
-      const { porRede, todasLinhas } = processData(agencias, carteiras, redes);
-      renderBoards(porRede, todasLinhas);
-      alert('✓ Painéis gerados com sucesso!');
-    } catch (error) { console.error('Erro ao processar:', error); alert('❌ Erro ao processar dados: ' + error.message); }
-  });
-
-  // Exportar todos
-  document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
-  document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToExcel);
-
-  // Limpar
-  document.getElementById('btn-clear').addEventListener('click', () => {
-    if (confirm('Deseja limpar todos os resultados?')) {
-      document.getElementById('results-area').innerHTML = '<div class="empty-state">Aguardando dados...<br />Preencha os campos ao lado e clique em Processar</div>';
-      document.getElementById('board-container').innerHTML = '';
-      document.getElementById('test-results').innerHTML = '';
-      window.boardData = null;
-    }
-  });
-
-  // Testar exportação
-  document.getElementById('btn-test-export').addEventListener('click', testExport);
-
-  // Carregar dados salvos
-  const savedAgencias = localStorage.getItem(LS_KEYS.agencias);
-  if (savedAgencias) { document.getElementById('txt-agencias').value = savedAgencias; document.getElementById('save-agencias').checked = true; }
-  const savedCarteiras = localStorage.getItem(LS_KEYS.carteiras);
-  if (savedCarteiras) { document.getElementById('txt-carteiras').value = savedCarteiras; document.getElementById('save-carteiras').checked = true; }
-  const savedRedes = localStorage.getItem(LS_KEYS.redes);
-  if (savedRedes) { document.getElementById('txt-redes').value = savedRedes; document.getElementById('save-redes').checked = true; }
-});
-
-// Expor funções para uso global
-window.exportBoard = exportBoard;
-window.previewBoard = previewBoard;
-window.exportNetworkToExcel = exportNetworkToExcel;
-</script>
-</body>
+>   // Temas
+>   document.querySelectorAll('.theme-option').forEach(option => {
+>     option.addEventListener('click', () => {
+>       document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+>       option.classList.add('active');
+>       currentTheme = option.dataset.theme;
+>     });
+>   });
+> 
+>   // Carregar arquivos
+>   document.getElementById('file-agencias').addEventListener('change', async (e) => {
+>     const file = e.target.files[0]; if (!file) return;
+>     try {
+>       const rows = await readExcelFile(file);
+>       const text = rows.map(row => row.slice(0, 6).join(';')).join('\n');
+>       document.getElementById('txt-agencias').value = text;
+>       if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, text); }
+>       alert('✓� Agências carregadas com sucesso!');
+>     } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
+>   });
+> 
+>   document.getElementById('file-carteiras').addEventListener('change', async (e) => {
+>     const file = e.target.files[0]; if (!file) return;
+>     try {
+>       const rows = await readExcelFile(file);
+>       const text = rows.map(row => row.slice(0, 8).join(';')).join('\n');
+>       document.getElementById('txt-carteiras').value = text;
+>       if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, text); }
+>       alert('✓� Carteiras carregadas com sucesso!');
+>     } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
+>   });
+> 
+>   document.getElementById('file-redes').addEventListener('change', async (e) => {
+>     const file = e.target.files[0]; if (!file) return;
+>     try {
+>       const rows = await readExcelFile(file);
+>       const text = rows.map(row => row.slice(0, 3).join(';')).join('\n');
+>       document.getElementById('txt-redes').value = text;
+>       if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, text); }
+>       alert('✓ Redes carregadas com sucesso!');
+>     } catch (error) { alert('❌ Erro ao ler arquivo: ' + error.message); }
+>   });
+> 
+>   // Processar
+>   document.getElementById('btn-processar').addEventListener('click', () => {
+>     const agencias = document.getElementById('txt-agencias').value;
+>     const carteiras = document.getElementById('txt-carteiras').value;
+>     const redes = document.getElementById('txt-redes').value;
+>     if (!agencias.trim()) { alert('⚠� Por favor, insira os dados de agências'); return; }
+>     try {
+>       if (document.getElementById('save-agencias').checked) { localStorage.setItem(LS_KEYS.agencias, agencias); }
+>       if (document.getElementById('save-carteiras').checked) { localStorage.setItem(LS_KEYS.carteiras, carteiras); }
+>       if (document.getElementById('save-redes').checked) { localStorage.setItem(LS_KEYS.redes, redes); }
+> 
+>       const { porRede, todasLinhas } = processData(agencias, carteiras, redes);
+>       renderBoards(porRede, todasLinhas);
+>       renderBoards(porRede, todasLinhas);
+>       alert('✓ Painéis gerados com sucesso!');
+>     } catch (error) { console.error('Erro ao processar:', error); alert('❌ Erro ao processar dados: ' + error.message); }
+>   });
+> 
+>   // Exportar todos
+>   document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
+>   document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToExcel);
+> 
+>   // Limpar
+>   document.getElementById('btn-clear').addEventListener('click', () => {
+>     if (confirm('Deseja limpar todos os resultados?')) {
+>       document.getElementById('results-area').innerHTML = '<div class="empty-state">Aguardando dados...<br />Preencha os campos ao lado e clique em Processar</div>';
+>       document.getElementById('board-container').innerHTML = '';
+>       document.getElementById('test-results').innerHTML = '';
+>       window.boardData = null;
+>     }
+> });
+> 
+>   // Testar exportação
+>   document.getElementById('btn-test-export').addEventListener('click', testExport);
+> 
+>   // Carregar dados salvos
+>   const savedAgencias = localStorage.getItem(LS_KEYS.agencias);
+>   if (savedAgencias) { document.getElementById('txt-agencias').value = savedAgencias; document.getElementById('save-agencias').checked = true; }
+>   const savedCarteiras = localStorage.getItem(LS_KEYS.carteiras);
+>   if (savedCarteiras) { document.getElementById('txt-carteiras').value = savedCarteiras; document.getElementById('save-carteiras').checked = true; }
+>   const savedRedes = localStorage.getItem(LS_KEYS.redes);
+>   if (savedRedes) { document.getElementById('txt-redes').value = savedRedes; document.getElementById('save-redes').checked = true; }
+> 
+> 
+> // Expor funções para uso global
+> window.exportBoard = exportBoard;
+> window.previewBoard = previewBoard;
+> window.exportNetworkToExcel = exportNetworkToExcel;
+> </script>
+> </script>
+> </body>
 </html>
