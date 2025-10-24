@@ -984,7 +984,11 @@ function renderBoards(porRede, todasLinhas) {
     const btnXLSX = document.createElement('button');
     btnXLSX.className = 'btn btn-excel';
     btnXLSX.textContent = '📊 XLSX';
-    btnXLSX.onclick = () => exportNetworkToExcel(nomeRede);
+    btnXLSX.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      exportNetworkToExcel(nomeRede);
+    };
     
     actionsDiv.appendChild(btnPreview);
     actionsDiv.appendChild(btnPNG);
@@ -1047,7 +1051,11 @@ function renderBoards(porRede, todasLinhas) {
     const btnXLSX = document.createElement('button');
     btnXLSX.className = 'btn btn-excel';
     btnXLSX.textContent = '📊 XLSX';
-    btnXLSX.onclick = () => exportNetworkToExcel('Abaixo_100');
+    btnXLSX.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      exportNetworkToExcel('Abaixo_100');
+    };
     
     actionsDiv.appendChild(btnPreview);
     actionsDiv.appendChild(btnPNG);
@@ -1065,13 +1073,14 @@ function createBoardHTML(nomeRede, items, stats, theme, hasRedeColumn = false) {
   const badge = getBadgeClass(stats.percentual);
   
   const HEADER_HEIGHT = 250;
-  const ROW_HEIGHT = 38;
-  const TABLE_HEADER_HEIGHT = 55;
-  const PADDING = 80;
-  const FOOTER_HEIGHT = 50;
+  const ROW_HEIGHT = 45; // Aumentado para garantir espaço
+  const TABLE_HEADER_HEIGHT = 60;
+  const PADDING = 100;
   
-  const tableHeight = TABLE_HEADER_HEIGHT + (items.length * ROW_HEIGHT);
-  const height = Math.max(900, HEADER_HEIGHT + tableHeight + PADDING + FOOTER_HEIGHT);
+  // Cálculo dinâmico real: header + cada linha da tabela + padding
+  const totalRows = items.length;
+  const tableHeight = TABLE_HEADER_HEIGHT + (totalRows * ROW_HEIGHT);
+  const height = HEADER_HEIGHT + tableHeight + PADDING;
 
   const themeMap = { 'classic': '', 'dark': 'dark', 'ocean': 'ocean', 'sunset': 'sunset', 'forest': 'forest' };
   const themeAttr = themeMap[theme] || '';
@@ -1190,21 +1199,18 @@ async function exportBoard(nomeRede) {
 
   const element = container.firstElementChild;
   const height = parseInt(element.style.height);
-  const extraMargin = 100;
-  const finalHeight = height + extraMargin;
 
   try {
     const canvas = await html2canvas(element, {
       backgroundColor: currentTheme === 'dark' ? '#0f172a' : currentTheme === 'ocean' ? '#ecfeff' : currentTheme === 'sunset' ? '#fff7ed' : currentTheme === 'forest' ? '#f0fdf4' : '#ffffff',
-      scale: 2, width: 600, height: finalHeight, windowWidth: 600, windowHeight: finalHeight,
-      logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0,
-      onclone: (clonedDoc) => { const clonedElement = clonedDoc.querySelector('.board-content'); if (clonedElement) { clonedElement.style.height = finalHeight + 'px'; } }
+      scale: 2, width: 600, height: height, windowWidth: 600, windowHeight: height,
+      logging: false, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0
     });
     const link = document.createElement('a');
     link.download = `painel-${nomeRede.replace(/[^\w\-]/g, '_')}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    console.log(`✓ Painel "${nomeRede}" exportado com sucesso! Altura: ${finalHeight}px`);
+    console.log(`✓ Painel "${nomeRede}" exportado com sucesso! Altura: ${height}px, Linhas: ${items.length}`);
   } catch (error) {
     console.error('Erro ao exportar:', error);
     alert('❌ Erro ao exportar painel. Tente novamente.');
