@@ -689,7 +689,7 @@ footer {
         
         <div class="controls">
           <button class="btn btn-primary" id="btn-export-all">💾 Exportar Todas as Redes (PNG)</button>
-          <button class="btn btn-excel" id="btn-export-all-excel">📊 Exportar Dados (XLSX)</button>
+          <button class="btn btn-excel" id="btn-export-all-excel">📊 Exportar Dados (CSV)</button>
           <button class="btn" id="btn-clear">🗑️ Limpar Resultados</button>
         </div>
 
@@ -983,11 +983,11 @@ function renderBoards(porRede, todasLinhas) {
     
     const btnXLSX = document.createElement('button');
     btnXLSX.className = 'btn btn-excel';
-    btnXLSX.textContent = '📊 XLSX';
+    btnXLSX.textContent = '📊 CSV';
     btnXLSX.onclick = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      exportNetworkToExcel(nomeRede);
+      exportNetworkToCSV(nomeRede);
     };
     
     actionsDiv.appendChild(btnPreview);
@@ -1050,11 +1050,11 @@ function renderBoards(porRede, todasLinhas) {
     
     const btnXLSX = document.createElement('button');
     btnXLSX.className = 'btn btn-excel';
-    btnXLSX.textContent = '📊 XLSX';
+    btnXLSX.textContent = '📊 CSV';
     btnXLSX.onclick = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      exportNetworkToExcel('Abaixo_100');
+      exportNetworkToCSV('Abaixo_100');
     };
     
     actionsDiv.appendChild(btnPreview);
@@ -1231,18 +1231,18 @@ async function exportAllBoards() {
   alert(`✓ ${total} painéis exportados com sucesso!`);
 }
 
-// ===== EXPORTAÇÃO DE DADOS (XLSX) =====
-function exportNetworkToExcel(rede) {
+// ===== EXPORTAÇÃO DE DADOS (CSV) =====
+function exportNetworkToCSV(rede) {
     if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
     const { porRede, abaixoDe100 } = window.boardData;
-    let items, sheetName;
+    let items, fileName;
 
     if (rede === 'Abaixo_100') {
         items = abaixoDe100;
-        sheetName = 'Abaixo de 100%';
+        fileName = 'Abaixo_de_100';
     } else {
         items = porRede[rede];
-        sheetName = rede;
+        fileName = rede;
     }
 
     if (!items || items.length === 0) {
@@ -1250,85 +1250,55 @@ function exportNetworkToExcel(rede) {
         return;
     }
 
-    const wb = XLSX.utils.book_new();
-    const wsData = [
-        ['Dependência', 'UF', 'Meta', 'Realizado Dia', '30 dias', 'Falta', '% Ating.']
-    ];
+    // Criar CSV
+    let csv = 'Dependência;UF;Meta;Realizado Dia;30 dias;Falta;% Ating.\n';
     items.forEach(item => {
-        wsData.push([
-            item.dependencia,
-            item.uf,
-            item.meta,
-            item.realizado,
-            item.realizados30,
-            item.falta,
-            item.percentual
-        ]);
+        csv += `${item.dependencia};${item.uf};${item.meta};${item.realizado};${item.realizados30};${item.falta};${item.percentual.toFixed(2)}\n`;
     });
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    XLSX.writeFile(wb, `dados_${sheetName.replace(/[^\w\-]/g, '_')}.xlsx`);
+
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `dados_${fileName.replace(/[^\w\-]/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
-function exportAllToExcel() {
+function exportAllToCSV() {
     if (!window.boardData) { alert('❌ Nenhum dado disponível para exportar'); return; }
     const { porRede, abaixoDe100 } = window.boardData;
-    const wb = XLSX.utils.book_new();
 
-    // Planilha de Resumo
-    const summaryData = [['Rede', 'Agências', 'Meta Total', 'Realizado Total (Mês)', '% Atingimento Geral']];
+    // CSV consolidado com todas as redes
+    let csv = 'Rede;Dependência;UF;Meta;Realizado Dia;30 dias;Falta;% Ating.\n';
+    
     Object.keys(porRede).forEach(rede => {
         const items = porRede[rede];
-        const totalMeta = items.reduce((sum, item) => sum + item.meta, 0);
-        const totalRealMes = items.reduce((sum, item) => sum + item.realizadoMes, 0);
-        const pctGeral = totalMeta > 0 ? (totalRealMes / totalMeta) * 100 : 0;
-        summaryData.push([rede, items.length, totalMeta, totalRealMes, pctGeral]);
-    });
-    const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(wb, summaryWs, 'Resumo');
-
-    // Planilhas individuais por rede
-    Object.keys(porRede).forEach(rede => {
-        const items = porRede[rede];
-        const wsData = [
-            ['Dependência', 'UF', 'Meta', 'Realizado Dia', '30 dias', 'Falta', '% Ating.']
-        ];
         items.forEach(item => {
-            wsData.push([
-                item.dependencia,
-                item.uf,
-                item.meta,
-                item.realizado,
-                item.realizados30,
-                item.falta,
-                item.percentual
-            ]);
+            csv += `${rede};${item.dependencia};${item.uf};${item.meta};${item.realizado};${item.realizados30};${item.falta};${item.percentual.toFixed(2)}\n`;
         });
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, rede.substring(0, 31));
     });
 
-    // Planilha "Abaixo de 100%", se houver dados
+    // Adicionar "Abaixo de 100%" se houver
     if (abaixoDe100.length > 0) {
-        const wsData = [
-            ['Dependência', 'UF', 'Rede', 'Meta', 'Realizado Mês', 'Falta', '% Ating.']
-        ];
         abaixoDe100.forEach(item => {
-            wsData.push([
-                item.dependencia,
-                item.uf,
-                item.rede,
-                item.meta,
-                item.realizadoMes,
-                item.falta,
-                item.percentual
-            ]);
+            csv += `${item.rede};${item.dependencia};${item.uf};${item.meta};${item.realizado};${item.realizados30};${item.falta};${item.percentual.toFixed(2)}\n`;
         });
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, 'Abaixo de 100%');
     }
 
-    XLSX.writeFile(wb, 'dados_completos_contatos_1314.xlsx');
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'dados_completos_contatos_1314.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // ===== TESTE DE EXPORTAÇÃO =====
@@ -1458,8 +1428,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Exportar todos (PNG)
   document.getElementById('btn-export-all').addEventListener('click', exportAllBoards);
   
-  // Exportar todos (Excel)
-  document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToExcel);
+  // Exportar todos (CSV)
+  document.getElementById('btn-export-all-excel').addEventListener('click', exportAllToCSV);
 
   // Limpar
   document.getElementById('btn-clear').addEventListener('click', () => {
